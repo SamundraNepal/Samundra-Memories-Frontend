@@ -1,6 +1,6 @@
 export default function Sppiner() {
   return (
-    <div className="flex flex-col bg-white border shadow-sm rounded-xl h-full w-full ">
+    <div className="flex flex-col border shadow-sm rounded-xl h-full w-full ">
       <div className="flex flex-auto flex-col justify-center items-center p-64 md:p-5">
         <div className="flex flex-col items-center justify-center">
           <div

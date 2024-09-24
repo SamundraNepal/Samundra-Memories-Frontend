@@ -10,9 +10,11 @@ import { GetLogedUserData } from "@/API/API CALLS";
 import Sppiner from "@/Components/Spiner";
 
 export default function RootLayout({ children }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [signUp, setSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  
   const [UserDetail, setUserDetails] = useState({
     firstName: "Raja",
     lastName: "mate",
