@@ -5,7 +5,6 @@ import { data } from 'autoprefixer';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
-import { CgSpinner } from 'react-icons/cg';
 import { FaRegUser } from 'react-icons/fa';
 
 // This makes the component a Client Component
@@ -18,10 +17,11 @@ export default function Page({ setSignUp }) {
     password: '',
     confirmPassword: '',
   });
-  const [imageData, setImageData] = useState();
+  const [imageData, setImageData] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(false);
   const [message, setMessage] = useState('');
+  const [success, setSuccess] = useState(false);
   function back() {
     setSignUp(false);
   }
@@ -66,27 +66,34 @@ export default function Page({ setSignUp }) {
   async function handleUploadImage(e) {
     e.preventDefault();
     const signUpToken = sessionStorage.getItem('signUpToken');
+
     try {
+      setMessage('');
       setLoading(true);
+      // Create FormData and append the image file
+      const formData = new FormData();
+      formData.append('photo', imageData); // Ensure 'image' matches the field name expected by your backend
+
       const response = await fetch(
         `http://127.1.0.1:8000/v1/memories/uploadImage/${signUpToken}`,
         {
           method: 'POST',
-          body: imageData,
+          body: formData,
         }
       );
 
       if (!response.ok) {
         const errorMessage = await response.json();
-        throw new Error('Something went wrong' || errorMessage.message);
+        throw new Error('Something went wrong', errorMessage.message);
       }
 
       const data = await response.json();
       setLoading(false);
-      console.log(data);
+      setMessage(data.message.message);
+      setSuccess(true);
     } catch (err) {
       setLoading(false);
-      throw new Error('Failed to upload the image');
+      throw new Error('Failed to upload the image', err);
     }
   }
 
@@ -193,7 +200,10 @@ export default function Page({ setSignUp }) {
             <UploadImage
               handleUploadImage={handleUploadImage}
               setImageData={setImageData}
+              imageData={imageData}
               loading={loading}
+              message={message}
+              success={success}
             />
           )}
         </div>
@@ -204,27 +214,50 @@ export default function Page({ setSignUp }) {
   );
 }
 
-function UploadImage({ handleUploadImage, setImageData, loading }) {
+function UploadImage({
+  handleUploadImage,
+  setImageData,
+  loading,
+  imageData,
+  message,
+  success,
+}) {
   return (
-    <div className="rounded-[10px]  rounded-[10px]  w-full flex justify-center item-center">
+    <div className="rounded-[10px]   w-full flex justify-center item-center">
       <form
         onSubmit={handleUploadImage}
         className=" bg-cyan-100 rounded-[10px] p-20 border-[5px] border-cyan-200"
       >
         {!loading ? (
-          <div className="flex flex-col justify-center items-center gap-5">
-            <strong>Upload Image</strong>
-            <FaRegUser className="text-6xl bg-cyan-200 p-2 rounded-full" />
-            <image />
-            <input
-              type="file"
-              required
-              accept="image/*"
-              onChange={(e) => setImageData(e.target.files[0])}
-            />
-            <button className="bg-cyan-300 p-2 rounded-[10px] hover:bg-cyan-200">
-              Upload
-            </button>
+          <div>
+            {!success ? (
+              <div className="flex flex-col justify-center items-center gap-5">
+                <strong>Upload Image</strong>
+                {imageData === '' ? (
+                  <FaRegUser className="text-6xl bg-cyan-200 p-2 rounded-full" />
+                ) : (
+                  <Image
+                    className="rounded-full object-cover"
+                    src={URL.createObjectURL(imageData)}
+                    height={150}
+                    width={150}
+                    alt="user Image"
+                  />
+                )}
+                <image />
+                <input
+                  type="file"
+                  required
+                  accept="image/*"
+                  onChange={(e) => setImageData(e.target.files[0])}
+                />
+                <button className="bg-cyan-300 p-2 rounded-[10px] hover:bg-cyan-200">
+                  Upload
+                </button>
+              </div>
+            ) : (
+              <h3 className="text-green-500 uppercase">{message}</h3>
+            )}
           </div>
         ) : (
           <Sppiner />

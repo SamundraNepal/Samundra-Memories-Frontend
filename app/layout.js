@@ -1,24 +1,23 @@
-"use client";
-import Navigation from "./components/Navigation";
-import "../styles/globals.css"; // Adjust the path if necessary
-import SearchBar from "@/Components/SearchBar";
-import UserDetails from "@/Components/UserDetails";
-import { useEffect, useState } from "react";
-import LogInPage from "./Log-SignUp/LogInPage/page";
-import SingUpPage from "./Log-SignUp/SignUpPage/page";
-import { GetLogedUserData } from "@/API/API CALLS";
-import Sppiner from "@/Components/Spiner";
+'use client';
+import Navigation from './components/Navigation';
+import '../styles/globals.css'; // Adjust the path if necessary
+import SearchBar from '@/Components/SearchBar';
+import UserDetails from '@/Components/UserDetails';
+import { useEffect, useState } from 'react';
+import LogInPage from './Log-SignUp/LogInPage/page';
+import SingUpPage from './Log-SignUp/SignUpPage/page';
+import { GetLogedUserData } from '@/API/API CALLS';
+import Sppiner from '@/Components/Spiner';
 
 export default function RootLayout({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [signUp, setSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  
   const [UserDetail, setUserDetails] = useState({
-    firstName: "Raja",
-    lastName: "mate",
-    email: "useremail@gmail.com",
+    firstName: 'Raja',
+    lastName: 'mate',
+    email: 'useremail@gmail.com',
   });
 
   // const router = useRouter();
@@ -29,13 +28,12 @@ export default function RootLayout({ children }) {
       try {
         if (isAuthenticated) {
           const data = await GetLogedUserData();
-          console.log("received data", data.message.getUser);
           setUserDetails(data.message.getUser);
           setLoading(false);
         }
       } catch (err) {
-        console.log(err.message);
         setLoading(false);
+        throw new Error(err.message);
       }
     }
     getUserdata();
