@@ -1,7 +1,9 @@
-export default function U_Button({ b_name, b_function }) {
+export default function U_Button({ b_name, b_function, red }) {
   return (
     <button
-      className="bg-green-100 w-40 rounded hover:bg-green-500 p-2 text-black"
+      className={`bg-slate-100 w-40 rounded ${
+        !red ? 'hover:bg-amber-900' : 'hover:bg-red-500'
+      } hover:text-white p-2 text-black font-bold`}
       onClick={b_function}
     >
       {b_name}

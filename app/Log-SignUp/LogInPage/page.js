@@ -1,9 +1,11 @@
 import U_Button from '@/Components/Button';
+import U_input from '@/Components/Input';
 import Sppiner from '@/Components/Spiner';
-import Link from 'next/link';
 import { useState } from 'react';
+import HandleForgotPassword from '../forgotPassword/ForgotPassword';
+import { apiLink } from '@/API/API CALLS';
 
-export default function Page({ setSignUp, setIsAuthenticated }) {
+export default function Page({ setSignUp, setIsAuthenticated, setIsAdmin }) {
   const [logInData, setLogInData] = useState({
     email: '',
     password: '',
@@ -27,11 +29,10 @@ export default function Page({ setSignUp, setIsAuthenticated }) {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch('http://127.1.0.1:8000/v1/memories/logIn', {
+      const response = await fetch(`${apiLink}/logIn`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(logInData),
-        credentials: 'include', // Important to include cookies in the request
       });
 
       if (!response.ok) {
@@ -55,6 +56,11 @@ export default function Page({ setSignUp, setIsAuthenticated }) {
         sessionStorage.setItem('cookies', data.message.token);
         setIsAuthenticated(true);
       }
+      if (data.message.Role === 'admin') {
+        setIsAdmin(true);
+        sessionStorage.setItem('cookies', data.message.token);
+        setIsAuthenticated(true);
+      }
     } catch (err) {
       setResult(false);
       setLoading(false);
@@ -64,17 +70,18 @@ export default function Page({ setSignUp, setIsAuthenticated }) {
 
   function handleForgotPassword() {
     setMessage('');
-    setForgotPassword((pre) => !pre);
+    setForgotPassword(true);
   }
 
   return (
     <>
       {!loading ? (
-        <div className="flex flex-col justify-center items-center bg-green-100 h-full w-full">
+        <div className="flex flex-col justify-center items-center h-full w-full bg-gradient-to-t from-amber-100 via-green-50 to-amber-100">
+          <title>Memories/LogIn</title>
           {!forgotPassword ? (
-            <div className="bg-green-500 h-3/5 w-2/5 rounded-[10px] flex justify-start  text-slate-50 bg-opacity-50">
+            <div className="bg-amber-500 h-3/5 w-2/5 rounded-[10px] flex justify-start  text-slate-50 bg-opacity-50">
               <div className="text-center p-6 w-full">
-                <h1 className=" text-2xl font-serif">
+                <h1 className=" text-2xl font-bold">
                   <strong>LOG IN </strong>
                 </h1>
 
@@ -85,23 +92,25 @@ export default function Page({ setSignUp, setIsAuthenticated }) {
                   <p>
                     <strong>Email Address</strong>
                   </p>
-                  <input
-                    placeholder="Enter your Email Address"
+                  <U_input
+                    PlaceHolder="Enter your Email Address"
                     name="email"
-                    value={logInData.email}
-                    onChange={HandleChange}
-                    className="p-2 rounded text-black bg-slate-200 "
+                    Value={logInData.email}
+                    OnChange={HandleChange}
+                    autoFocus
+                    Type="email"
                   />
+
                   <p>
                     <strong>Password</strong>
                   </p>
 
-                  <input
-                    placeholder="Enter your Password"
+                  <U_input
+                    PlaceHolder="Enter your Password"
                     name="password"
-                    value={logInData.password}
-                    onChange={HandleChange}
-                    type="password"
+                    Value={logInData.password}
+                    OnChange={HandleChange}
+                    Type="password"
                     className="p-2 rounded text-black bg-slate-200 "
                   />
 
@@ -112,13 +121,12 @@ export default function Page({ setSignUp, setIsAuthenticated }) {
                       </p>
                     )}
                     {result && (
-                      <input
-                        placeholder="verification code"
+                      <U_input
+                        PlaceHolder="verification code"
                         name="OTP"
-                        value={logInData.OTP}
-                        onChange={HandleChange}
+                        Value={logInData.OTP}
+                        OnChange={HandleChange}
                         type="text"
-                        className="p-2 rounded text-black"
                       />
                     )}
                   </div>
@@ -126,7 +134,7 @@ export default function Page({ setSignUp, setIsAuthenticated }) {
                   <label
                     className={`${
                       result
-                        ? 'text-green-600 text-xl uppercase'
+                        ? 'text-whute-600 text-xl uppercase'
                         : 'text-red-600 uppercase'
                     }`}
                   >
@@ -135,9 +143,7 @@ export default function Page({ setSignUp, setIsAuthenticated }) {
                   <div className="flex gap-4">
                     <U_Button b_name="Log In" />
 
-                    <Link href="/Log-SignUp/SignUpPage/">
-                      <U_Button b_name="Sign Up" b_function={signUp} />
-                    </Link>
+                    <U_Button b_name="Sign Up" b_function={signUp} />
 
                     <U_Button
                       b_name="Forgot Password"
@@ -149,6 +155,7 @@ export default function Page({ setSignUp, setIsAuthenticated }) {
             </div>
           ) : (
             <HandleForgotPassword
+              setForgotPassword={setForgotPassword}
               setMessage={setMessage}
               message={message}
               setLoading={setLoading}
@@ -161,69 +168,4 @@ export default function Page({ setSignUp, setIsAuthenticated }) {
       )}
     </>
   );
-}
-
-function HandleForgotPassword({ setMessage, message, setLoading, loading }) {
-  const [foundAccout, setFoundAccount] = useState(true);
-  const [Email, setEmail] = useState({ email: '' });
-
-  async function findAccount() {
-    try {
-      setLoading(true);
-      const response = await fetch(
-        'http://127.1.0.1:8000/v1/memories/user/forgotPassword',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(Email),
-        }
-      );
-
-      if (!response.ok) {
-        const error = await response.json();
-        setMessage(error.status);
-        setLoading(false);
-      } else {
-        const data = await response.json();
-        setMessage(data.status);
-        console.log(data);
-        setLoading(false);
-        setFoundAccount(true);
-      }
-    } catch (err) {
-      setLoading(false);
-      setFoundAccount(false);
-
-      setMessage('Something went wrong. Please try again.');
-    }
-  }
-  return (
-    <>
-      <div className="bg-cyan-100 rounded-[10px] border-[10px] border-cyan-200 flex flex-col h-4/6 w-5/6 justify-center items-center gap-10">
-        <header className="uppercase font-bold">
-          <h1> Forgot Password </h1>
-        </header>
-        {!foundAccout ? (
-          <div className="flex flex-col gap-5 justify-center items-center bg-cyan-200 p-3 rounded-[10px]">
-            <h3>Please enter your email address to search for your account.</h3>
-            <input
-              type="text"
-              placeholder="Enter your email"
-              className="p-4 rounded-[10px]"
-              value={Email.email}
-              onChange={(e) => setEmail({ email: e.target.value })}
-            />
-            <h3 className="text-red-500">{message}</h3>
-            <U_Button b_name="Find" b_function={findAccount} />
-          </div>
-        ) : (
-          <AccountFound />
-        )}
-      </div>
-    </>
-  );
-}
-
-function AccountFound() {
-  return <div className="bg-cyan-50 h-4/5 w-3/5"></div>;
 }

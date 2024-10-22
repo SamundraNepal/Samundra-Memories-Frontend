@@ -1,7 +1,9 @@
 // ClientComponent.js
 'use client';
+import { apiLink } from '@/API/API CALLS';
+import U_Button from '@/Components/Button';
+import U_input from '@/Components/Input';
 import Sppiner from '@/Components/Spiner';
-import { data } from 'autoprefixer';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -16,12 +18,14 @@ export default function Page({ setSignUp }) {
     email: '',
     password: '',
     confirmPassword: '',
+    adminCode: '',
   });
   const [imageData, setImageData] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(false);
   const [message, setMessage] = useState('');
   const [success, setSuccess] = useState(false);
+
   function back() {
     setSignUp(false);
   }
@@ -36,7 +40,7 @@ export default function Page({ setSignUp }) {
     e.preventDefault();
     try {
       setLoading(true);
-      const response = await fetch('http://127.1.0.1:8000/v1/memories/signUp', {
+      const response = await fetch(`${apiLink}/signUp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -70,21 +74,19 @@ export default function Page({ setSignUp }) {
     try {
       setMessage('');
       setLoading(true);
+
       // Create FormData and append the image file
       const formData = new FormData();
       formData.append('photo', imageData); // Ensure 'image' matches the field name expected by your backend
 
-      const response = await fetch(
-        `http://127.1.0.1:8000/v1/memories/uploadImage/${signUpToken}`,
-        {
-          method: 'POST',
-          body: formData,
-        }
-      );
+      const response = await fetch(`${apiLink}/uploadImage/${signUpToken}`, {
+        method: 'POST',
+        body: formData,
+      });
 
       if (!response.ok) {
         const errorMessage = await response.json();
-        throw new Error('Something went wrong', errorMessage.message);
+        throw new Error('Something went wrong ' + errorMessage.message);
       }
 
       const data = await response.json();
@@ -93,81 +95,97 @@ export default function Page({ setSignUp }) {
       setSuccess(true);
     } catch (err) {
       setLoading(false);
-      throw new Error('Failed to upload the image', err);
+      throw new Error('Failed to upload the image ' + err.message);
     }
   }
 
   return (
     <>
       {!loading ? (
-        <div className="flex flex-col justify-center items-center bg-cyan-50 h-full w-full">
+        <div
+          className={`h-full w-full flex justify-center items-center bg-gradient-to-t from-amber-100 via-green-50 to-amber-100 `}
+        >
+          <title>Memories/SignUp</title>
+
           {!result ? (
-            <div className="bg-slate-500 rounded-[10px] flex justify-center p-24 text-slate-50 bg-opacity-50">
-              <div className="flex flex-col p-3">
-                <h1 className="mt-10 text-xl">
-                  <strong>Sign Up </strong>
-                </h1>
+            <div className="bg-amber-500 rounded-[10px] w-4/5 flex justify-center text-slate-50 bg-opacity-50">
+              <div className="flex flex-col w-3/5 ">
+                <div>
+                  <h1 className="text-xl mt-5">
+                    <strong>Sign Up </strong>
+                  </h1>
+                </div>
 
                 <form
-                  className="mt-16 text-start gap-3 "
+                  className="flex flex-col text-start"
                   onSubmit={handleSubmit}
                 >
                   <p>
                     <strong>First Name</strong>
                   </p>
-                  <input
-                    placeholder="Enter your Name"
+                  <U_input
+                    PlaceHolder="Enter your Name"
                     name="firstName"
-                    value={formData.firstName}
-                    onChange={HandleChange}
-                    className="p-2 rounded text-black"
+                    Value={formData.firstName}
+                    OnChange={HandleChange}
                   />
 
                   <p>
                     <strong>Last Name</strong>
                   </p>
-                  <input
-                    placeholder="Enter your Last Name"
+                  <U_input
+                    PlaceHolder="Enter your Last Name"
                     name="lastName"
                     value={formData.lastName}
-                    onChange={HandleChange}
-                    className="p-2 rounded text-black"
+                    OnChange={HandleChange}
                   />
 
                   <p>
                     <strong>Email Address</strong>
                   </p>
-                  <input
-                    placeholder="Enter your Email Address"
+                  <U_input
+                    PlaceHolder="Enter your Email Address"
                     name="email"
-                    value={formData.email}
-                    onChange={HandleChange}
-                    className="p-2 rounded text-black"
+                    Value={formData.email}
+                    OnChange={HandleChange}
+                    Type="email"
                   />
                   <p>
                     <strong>Password</strong>
                   </p>
 
-                  <input
-                    placeholder="Enter your Password"
+                  <U_input
+                    PlaceHolder="Enter your Password"
                     name="password"
-                    value={formData.password}
-                    onChange={HandleChange}
-                    type="password"
-                    className="p-2 rounded text-black"
+                    Value={formData.password}
+                    OnChange={HandleChange}
+                    Type="password"
                   />
 
                   <p>
                     <strong>Confirm Password</strong>
                   </p>
 
-                  <input
-                    placeholder="Confirm Password"
-                    type="password"
+                  <U_input
+                    PlaceHolder="Confirm Password"
+                    Type="password"
                     name="confirmPassword"
-                    value={formData.confirmPassword}
+                    Value={formData.confirmPassword}
+                    OnChange={HandleChange}
+                  />
+
+                  <p>
+                    <strong>Admin Code</strong>
+                    <p>If applicable</p>
+                  </p>
+
+                  <input
+                    placeholder="Enter Admin Password"
+                    type="adminCode"
+                    name="adminCode"
+                    value={formData.adminCode}
                     onChange={HandleChange}
-                    className="p-2 rounded text-black"
+                    className={`p-2 rounded text-black bg-slate-200  border-none outline-none focus:ring focus:ring-green-50`}
                   />
 
                   <div>
@@ -182,16 +200,10 @@ export default function Page({ setSignUp }) {
 
                   <div className="flex justify-center items-center gap-3 p-10 text-black">
                     <Link href="/">
-                      <button
-                        className="bg-slate-300 w-20 rounded"
-                        onClick={back}
-                      >
-                        Back
-                      </button>
+                      <U_Button b_name={'Back'} b_function={back} />
                     </Link>
-                    <button className="bg-slate-300 w-40 rounded">
-                      Create Account
-                    </button>
+
+                    <U_Button b_name={'Create Account'} />
                   </div>
                 </form>
               </div>
@@ -204,6 +216,7 @@ export default function Page({ setSignUp }) {
               loading={loading}
               message={message}
               success={success}
+              setSignUp={setSignUp}
             />
           )}
         </div>
@@ -221,12 +234,13 @@ function UploadImage({
   imageData,
   message,
   success,
+  setSignUp,
 }) {
   return (
-    <div className="rounded-[10px]   w-full flex justify-center item-center">
+    <div className="rounded-[10px] w-full flex justify-center item-center">
       <form
         onSubmit={handleUploadImage}
-        className=" bg-cyan-100 rounded-[10px] p-20 border-[5px] border-cyan-200"
+        className=" bg-gradient-to-t from-amber-50 via-amber-500 to-amber-50 rounded-[10px] p-20"
       >
         {!loading ? (
           <div>
@@ -234,7 +248,7 @@ function UploadImage({
               <div className="flex flex-col justify-center items-center gap-5">
                 <strong>Upload Image</strong>
                 {imageData === '' ? (
-                  <FaRegUser className="text-6xl bg-cyan-200 p-2 rounded-full" />
+                  <FaRegUser className="text-6xl  p-2 rounded-full" />
                 ) : (
                   <Image
                     className="rounded-full object-cover"
@@ -244,19 +258,24 @@ function UploadImage({
                     alt="user Image"
                   />
                 )}
-                <image />
-                <input
-                  type="file"
+                <U_input
+                  Type="file"
                   required
                   accept="image/*"
-                  onChange={(e) => setImageData(e.target.files[0])}
+                  OnChange={(e) => setImageData(e.target.files[0])}
                 />
                 <button className="bg-cyan-300 p-2 rounded-[10px] hover:bg-cyan-200">
                   Upload
                 </button>
               </div>
             ) : (
-              <h3 className="text-green-500 uppercase">{message}</h3>
+              <div className="flex flex-col justify-center items-center gap-5">
+                <h3 className="text-white uppercase">{message}</h3>
+                <U_Button
+                  b_name={'Log In'}
+                  b_function={(e) => setSignUp(false)}
+                />
+              </div>
             )}
           </div>
         ) : (
