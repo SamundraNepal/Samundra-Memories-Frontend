@@ -5,8 +5,6 @@ export default function ViewVideo({
   index,
   items,
   indexOne,
-  setOnLoadCompleteVideo,
-  onLoadCompleteVideo,
   viewImage,
   handleSelectedFiles,
 }) {
@@ -38,17 +36,20 @@ export default function ViewVideo({
         <Tick setIsTicked={setIsTicked} />
       </div>
       {/* Position the Tick on top */}
-      <div onClick={(e) => viewImage(items, indexOne, index)}>
+      <div
+        onClick={(e) => viewImage(items, indexOne, index)}
+        className="bg-slate-300"
+      >
         <video
-          className={`border-4 hover:border-green-500 cursor-pointer transition-all duration-300  h-5/5 w-5/5 ${
+          className={`border-4 cursor-pointer transition-all duration-300 w-full h-full ${
             isTick ? 'p-2' : 'p-0'
-          }`}
-          style={{
-            display: onLoadCompleteVideo ? 'block' : 'none', // Hide video until loaded
-          }}
-          onLoadedData={() => setOnLoadCompleteVideo(true)}
+          } hover:border-green-500`} // Using a more descriptive state name
         >
-          <source src={items?.videoURL} alt={items.viodeoName} />
+          <source
+            src={items?.videoURL}
+            type="video/mp4"
+            alt={items?.videoName}
+          />
         </video>
       </div>
     </div>

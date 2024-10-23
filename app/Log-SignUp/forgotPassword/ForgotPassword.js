@@ -1,3 +1,4 @@
+import { apiLink } from '@/API/API CALLS';
 import U_Button from '@/Components/Button';
 import U_input from '@/Components/Input';
 import Sppiner from '@/Components/Spiner';
@@ -18,14 +19,11 @@ export default function HandleForgotPassword({
   async function findAccount() {
     try {
       setLoading(true);
-      const response = await fetch(
-        'http://127.1.0.1:8000/v1/memories/user/forgotPassword',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(Email),
-        }
-      );
+      const response = await fetch(`${apiLink}/user/forgotPassword`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(Email),
+      });
 
       if (!response.ok) {
         const error = await response.json();
@@ -111,7 +109,7 @@ function AccountFound({ accountDetails, setForgotPassword }) {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://127.1.0.1:8000/v1/memories/resetPassword/${forgotPasswordData.code}`,
+        `${apiLink}/resetPassword/${forgotPasswordData.code}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -161,7 +159,7 @@ function AccountFound({ accountDetails, setForgotPassword }) {
   "
               height={50}
               width={50}
-              src={accountDetails.imageLink}
+              src={accountDetails?.imageLink.replace('}', ' ')}
               alt="user image"
             />
           </div>

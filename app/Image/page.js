@@ -234,14 +234,14 @@ function ViewLoadImages({ data, viewImage, handleSelectedFiles }) {
             >
               {/* Display group ID */}
 
-              <div className="flex justify-center font-bold text-slate-300">
+              <div className="flex justify-start font-bold text-slate-300">
                 <span>{group.fileDatas.length > 0 && group._id}</span>
               </div>
 
               {/* First 5 images */}
               <div
                 key={indexOne}
-                className={`grid w-full bg-slate-300 p-0 gap-0 ${
+                className={`grid w-full ${
                   group.fileDatas.length >= 5
                     ? 'grid-cols-6'
                     : group.fileDatas.length === 4
@@ -250,11 +250,11 @@ function ViewLoadImages({ data, viewImage, handleSelectedFiles }) {
                     ? 'grid-cols-3'
                     : group.fileDatas.length === 2
                     ? 'grid-cols-2'
-                    : 'grid-cols-1'
+                    : 'grid-cols-2'
                 }`}
               >
                 {group.fileDatas.map((items, index) => (
-                  <div key={index}>
+                  <div key={index} className="bg-slate-300">
                     <ViewImage
                       index={index}
                       items={items}
@@ -405,7 +405,7 @@ function ImageFullScreen({
                           <CiCircleChevLeft />
                         </button>
                       </div>
-                      <div className="flex flex-col mt-5 gap-5">
+                      <div className="flex flex-col mt-5 gap-4">
                         <span className="font-bold border-b-4 border-yellow-200">
                           Details
                         </span>
@@ -414,7 +414,7 @@ function ImageFullScreen({
                         <span>
                           Original Date: {imageDetails.dateTimeOriginal}
                         </span>
-                        <span>Size :{imageDetails.imageSize}</span>
+                        <span>Size :{imageDetails.imageSize} Mb</span>
                         {imageDetails.make != 'Missing' && (
                           <span>Make :{imageDetails.make} </span>
                         )}

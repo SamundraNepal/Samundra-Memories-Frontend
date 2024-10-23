@@ -110,7 +110,7 @@ export default function FullScreen({
                     <CiCircleChevLeft />
                   </button>
                 </div>
-                <div className="flex flex-col mt-5 gap-5">
+                <div className="flex flex-col mt-5 gap-4 ">
                   <span className="font-bold border-b-4 border-yellow-200">
                     Details
                   </span>
@@ -155,7 +155,7 @@ export default function FullScreen({
             </div>
           </div>
         ) : (
-          <div className="text-white h-1/5 flex items-center gap-5 mt-2 p-2 text-amber-500">
+          <div className=" h-1/5 flex items-center gap-5 mt-2 p-2 text-amber-500">
             <div className="flex bg-slate-50 rounded-[10px] border-4">
               <button
                 className="text-6xl flex justify-center hover:text-slate-500"

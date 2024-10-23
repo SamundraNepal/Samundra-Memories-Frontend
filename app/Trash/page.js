@@ -1,6 +1,6 @@
 'use client';
 import { loadTrashImages, loadTrashVideos } from '@/API/API CALLS';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { MdOutlineDelete } from 'react-icons/md';
 
 import Sppiner from '@/Components/Spiner';
@@ -10,7 +10,7 @@ import TrashFilesVideo from '../components/trashFileVideo';
 import DeleteRestoreFiles from '../components/deleteRestore';
 import { MdOutlineSettingsBackupRestore } from 'react-icons/md';
 
-export default function page() {
+export default function Page() {
   const [loading, setLoading] = useState(true);
   const [viewImageFullScreen, setViewImageFullScreen] = useState({});
   const [totalFiles, setTotalFiles] = useState([]);
@@ -160,13 +160,15 @@ export default function page() {
                   >
                     {/* Combine video and image files */}
                     {totalFiles.map((item, index) => (
-                      <TrashFilesVideo
-                        index={index}
-                        item={item}
-                        viewVideos={viewVideos}
-                        viewImage={viewImage}
-                        handleSelectedFiles={handleSelectedFiles}
-                      />
+                      <div key={index}>
+                        <TrashFilesVideo
+                          index={index}
+                          item={item}
+                          viewVideos={viewVideos}
+                          viewImage={viewImage}
+                          handleSelectedFiles={handleSelectedFiles}
+                        />
+                      </div>
                     ))}
                   </div>
                 ) : (

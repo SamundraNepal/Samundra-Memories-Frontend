@@ -76,7 +76,7 @@ export default function Page({ setSignUp, setIsAuthenticated, setIsAdmin }) {
   return (
     <>
       {!loading ? (
-        <div className="flex flex-col justify-center items-center h-full w-full bg-gradient-to-t from-amber-100 via-green-50 to-amber-100">
+        <div className="flex flex-col justify-center items-center h-full w-full bg-gradient-to-t from-amber-100 via-green-50 to-amber-100 ">
           <title>Memories/LogIn</title>
           {!forgotPassword ? (
             <div className="bg-amber-500 h-3/5 w-2/5 rounded-[10px] flex justify-start  text-slate-50 bg-opacity-50">

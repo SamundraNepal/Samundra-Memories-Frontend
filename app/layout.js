@@ -1,7 +1,6 @@
 'use client';
 import Navigation from './components/Navigation';
 import '../styles/globals.css'; // Adjust the path if necessary
-import SearchBar from '@/Components/SearchBar';
 import UserDetails from '@/Components/UserDetails';
 import { useEffect, useState } from 'react';
 import LogInPage from './Log-SignUp/LogInPage/page';
@@ -52,34 +51,24 @@ export default function RootLayout({ children }) {
       }
     }
     getUserdata();
-  }, [isAuthenticated, reloadApproveData]);
+  }, [isAdmin, isAuthenticated, reloadApproveData]);
 
   return (
     <html lang="en">
       <body className="h-screen w-screen">
         {isAuthenticated ? (
           <div className="grid grid-rows-[auto_1fr_auto] grid-cols-[auto_1fr] h-full w-full">
-            <header className="bg-gradient-to-r from-amber-500 via-amber-200 to-amber-500 col-span-3 p-5 border-b-4 border-amber-500">
-              <div className="flex justify-center items-center">
-                <strong>MEMORIES</strong>
-              </div>
-              {/*   {!isAdmin && (
-                <SearchBar placeholder="Search for Photos and Videos" />
-              )}*/}
-              <div className="flex justify-end">
-                <UserDetails
-                  UserDetail={UserDetail}
-                  setIsAuthenticated={setIsAuthenticated}
-                  changePasswordPopUp={changePasswordPopUp}
-                  setChnagePasswordPopUp={setChnagePasswordPopUp}
-                  setDeActivateUser={setDeActivateUser}
-                  setChangeProfilePic={setChangeProfilePic}
-                />
-              </div>
-            </header>
-            <aside className="bg-gradient-to-t from-amber-100 via-amber-500 to-amber-100 col-start-1 col-span-1 w-40 border-r-4 border-amber-500">
-              <strong>{!isAdmin && <Navigation />} </strong>
-            </aside>
+            <Header
+              UserDetail={UserDetail}
+              setIsAuthenticated={setIsAuthenticated}
+              changePasswordPopUp={changePasswordPopUp}
+              setChnagePasswordPopUp={setChnagePasswordPopUp}
+              setDeActivateUser={setDeActivateUser}
+              setChangeProfilePic={setChangeProfilePic}
+            />
+
+            <SideBar isAdmin={isAdmin} />
+
             <div className="rounded-[10px] bg-green-50 flex justify-center">
               {!loading ? (
                 <main className="w-full h-full bg-gradient-to-t from-amber-100 via-amber-50 to-amber-100">
@@ -119,19 +108,68 @@ export default function RootLayout({ children }) {
             </footer>
           </div>
         ) : (
-          <div className="flex justify-center items-center h-full">
-            {signUp ? (
-              <SingUpPage setSignUp={setSignUp} />
-            ) : (
-              <LogInPage
-                setIsAuthenticated={setIsAuthenticated}
-                setSignUp={setSignUp}
-                setIsAdmin={setIsAdmin}
-              />
-            )}
-          </div>
+          <BeforeAuth
+            signUp={signUp}
+            setSignUp={setSignUp}
+            setIsAuthenticated={setIsAuthenticated}
+            setIsAdmin={setIsAdmin}
+          />
         )}
       </body>
     </html>
+  );
+}
+
+function Header({
+  UserDetail,
+  setIsAuthenticated,
+  changePasswordPopUp,
+  setChnagePasswordPopUp,
+  setDeActivateUser,
+  setChangeProfilePic,
+}) {
+  return (
+    <header className="bg-gradient-to-r from-amber-500 via-amber-200 to-amber-500 col-span-3 p-5 border-b-4 border-amber-500">
+      <div className="flex justify-center items-center">
+        <strong>MEMORIES</strong>
+      </div>
+      {/*   {!isAdmin && (
+    <SearchBar placeholder="Search for Photos and Videos" />
+  )}*/}
+      <div className="flex justify-end">
+        <UserDetails
+          UserDetail={UserDetail}
+          setIsAuthenticated={setIsAuthenticated}
+          changePasswordPopUp={changePasswordPopUp}
+          setChnagePasswordPopUp={setChnagePasswordPopUp}
+          setDeActivateUser={setDeActivateUser}
+          setChangeProfilePic={setChangeProfilePic}
+        />
+      </div>
+    </header>
+  );
+}
+
+function SideBar({ isAdmin }) {
+  return (
+    <aside className="bg-gradient-to-t from-amber-100 via-amber-500 to-amber-100 col-start-1 col-span-1 w-40 border-r-4 border-amber-500">
+      <strong>{!isAdmin && <Navigation />} </strong>
+    </aside>
+  );
+}
+
+function BeforeAuth({ signUp, setSignUp, setIsAuthenticated, setIsAdmin }) {
+  return (
+    <div className="flex justify-center items-center h-full">
+      {signUp ? (
+        <SingUpPage setSignUp={setSignUp} />
+      ) : (
+        <LogInPage
+          setIsAuthenticated={setIsAuthenticated}
+          setSignUp={setSignUp}
+          setIsAdmin={setIsAdmin}
+        />
+      )}
+    </div>
   );
 }

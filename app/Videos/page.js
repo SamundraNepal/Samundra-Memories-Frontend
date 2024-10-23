@@ -340,7 +340,7 @@ function ImageFullScreen({
                           <CiCircleChevLeft />
                         </button>
                       </div>
-                      <div className="flex flex-col mt-5 gap-5">
+                      <div className="flex flex-col mt-5 gap-4">
                         <span className="font-bold border-b-4 border-yellow-200">
                           Details
                         </span>
@@ -350,9 +350,9 @@ function ImageFullScreen({
                           Original Date: {imageDetails.dateTimeOriginal}
                         </span>
 
-                        <span>Duration : {imageDetails.videoDuration}</span>
+                        <span>Duration : {imageDetails.videoDuration} Sec</span>
 
-                        <span>Size :{imageDetails.videoFileSize}</span>
+                        <span>Size :{imageDetails.videoFileSize} Mb</span>
                         {imageDetails.make != 'Missing' && (
                           <span>Make :{imageDetails.make} </span>
                         )}
@@ -371,8 +371,8 @@ function ImageFullScreen({
                   </div>
                 </div>
               ) : (
-                <div className="text-white h-1/5 flex items-center gap-5 mt-2 p-2 text-amber-500">
-                  <div className="flex bg-slate-50 rounded-[10px] border-4">
+                <div className="text-white h-1/5 flex items-center gap-5 mt-2 p-2">
+                  <div className="flex bg-slate-50 rounded-[10px] border-4 text-amber-500">
                     <button
                       className="text-6xl flex justify-center hover:text-slate-500"
                       onClick={close}
@@ -471,13 +471,13 @@ function ViewLoadVidoes({
                 }`}
               >
                 <div>
-                  <div className="flex justify-center font-bold text-slate-300">
+                  <div className="flex justify-start font-bold text-slate-300">
                     <span>{group.fileDatas.length > 0 && group._id}</span>
                   </div>
 
                   {/* First 5 images */}
                   <div
-                    className={`grid w-full bg-slate-300 p-0 gap-0 ${
+                    className={`grid w-full ${
                       group.fileDatas.length >= 5
                         ? 'grid-cols-6'
                         : group.fileDatas.length === 4
@@ -486,7 +486,7 @@ function ViewLoadVidoes({
                         ? 'grid-cols-3'
                         : group.fileDatas.length === 2
                         ? 'grid-cols-2'
-                        : 'grid-cols-1'
+                        : 'grid-cols-2'
                     }`}
                   >
                     {group.fileDatas.map((items, index) => (

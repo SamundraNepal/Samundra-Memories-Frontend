@@ -35,8 +35,8 @@ export default function Navigation() {
           </li>
         </ul>
 
-        <div className=" h-[200px] w-full flex items-end flex flex-col">
-          <div className="bg-white w-full p-2 rounded-[10px]">
+        <div className=" h-[50px] w-full flex items-end flex flex-col p-2">
+          <div className=" w-full p-2 rounded-[10px]">
             <StorageTotal />
           </div>
         </div>
