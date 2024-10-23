@@ -1,3 +1,5 @@
+'use client';
+
 import U_Button from '@/Components/Button';
 import U_input from '@/Components/Input';
 import Sppiner from '@/Components/Spiner';

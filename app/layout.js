@@ -13,7 +13,7 @@ import Page from './adminPage/page';
 import ChangeProfilePicture from './components/profilePicture';
 
 export default function RootLayout({ children }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [signUp, setSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);

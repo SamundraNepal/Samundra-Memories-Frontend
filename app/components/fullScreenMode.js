@@ -1,13 +1,20 @@
 import Image from 'next/image';
 import DeleteFiles from './deleteFile';
-import MapLocation from './Maps';
 import { useEffect, useState } from 'react';
 import { CiCircleInfo, CiCircleChevLeft } from 'react-icons/ci';
 import { MdOutlineDelete } from 'react-icons/md';
 
 import { MdOutlineSettingsBackupRestore } from 'react-icons/md';
 import { FaChevronRight } from 'react-icons/fa6';
-import VideoMapLocation from './videoMap';
+import dynamic from 'next/dynamic';
+// Dynamically import the VideoMapLocation component without SSR
+const VideoMapLocation = dynamic(() => import('./videoMap'), {
+  ssr: false,
+});
+
+const MapLocation = dynamic(() => import('./Maps'), {
+  ssr: false,
+});
 
 export default function FullScreen({
   setIsFullScreen,

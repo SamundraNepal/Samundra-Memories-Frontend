@@ -1,6 +1,6 @@
 'use client';
 import U_Button from '@/Components/Button';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import UploadFiles from '../components/uploadFiles';
 import { loadVideos } from '@/API/API CALLS';
 import { CiCircleInfo, CiCircleChevLeft } from 'react-icons/ci';
@@ -8,9 +8,14 @@ import { MdOutlineDelete } from 'react-icons/md';
 import DeleteFiles from '../components/deleteFile';
 import { FaChevronRight } from 'react-icons/fa6';
 import Sppiner from '@/Components/Spiner';
-import VideoMapLocation from '../components/videoMap';
 import ViewVideo from '../components/viewVideo';
 import DeleteMultipleFiles from '../components/deleteMultiple';
+import dynamic from 'next/dynamic';
+
+// Dynamically import the VideoMapLocation component without SSR
+const VideoMapLocation = dynamic(() => import('../components/videoMap'), {
+  ssr: false,
+});
 
 export default function Page() {
   const [uploadBox, setUploadBox] = useState(false);
@@ -21,7 +26,7 @@ export default function Page() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentIndexOne, setCurrentIndexOne] = useState(0);
   const [page, setPage] = useState(10);
-  const [scrollDiv, setScrollDiv] = useState();
+  const scrollDiv = useRef(null);
   const [onLoadCompleteVideo, setOnLoadCompleteVideo] = useState(false);
   const [isSelected, setIsSelected] = useState([]);
   const [isDeleteAll, setIsDeleteAll] = useState(false);
@@ -30,20 +35,38 @@ export default function Page() {
 
   useEffect(() => {
     GetloadVideos();
-    setTimeout(() => {
-      setScrollDiv(document.getElementById('childDiv'));
-    }, 100);
   }, []);
 
-  scrollDiv?.addEventListener('scroll', (event) => {
-    event.preventDefault();
-    const scrollHeight = scrollDiv.scrollHeight;
-    const totalHeight = scrollDiv.scrollTop + scrollDiv.clientHeight;
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const timer = setTimeout(() => {
+        // Check if scrollDiv is defined
+        if (!scrollDiv.current) return;
 
-    if (totalHeight >= scrollHeight) {
-      setPage((cur) => cur + 5);
+        const handleScroll = (event) => {
+          event.preventDefault();
+          const scrollHeight = scrollDiv.current.scrollHeight;
+          const totalHeight =
+            scrollDiv.current.scrollTop + scrollDiv.current.clientHeight;
+
+          if (totalHeight >= scrollHeight) {
+            setPage((cur) => cur + 5);
+          }
+        };
+
+        const div = scrollDiv.current;
+        div.addEventListener('scroll', handleScroll);
+
+        // Cleanup function to remove the event listener
+        return () => {
+          div.removeEventListener('scroll', handleScroll);
+        };
+      }, 100);
+
+      // Cleanup for the timer
+      return () => clearTimeout(timer);
     }
-  });
+  }, [scrollDiv]);
 
   async function GetloadVideos() {
     try {
@@ -120,7 +143,6 @@ export default function Page() {
         return [...prevData, selectedFile];
       } else {
         // Remove the duplicate file if it already exists in the state
-        console.log('duplicate removed');
         return prevData.filter((item) => item !== selectedFile);
       }
     });
@@ -189,6 +211,7 @@ export default function Page() {
                 onLoadCompleteVideo={onLoadCompleteVideo}
                 viewImage={viewImage}
                 handleSelectedFiles={handleSelectedFiles}
+                scrollDiv={scrollDiv}
               />
             </div>
           ) : (
@@ -452,6 +475,7 @@ function ViewLoadVidoes({
   onLoadCompleteVideo,
   viewImage,
   handleSelectedFiles,
+  scrollDiv,
 }) {
   return (
     <div>
@@ -460,6 +484,7 @@ function ViewLoadVidoes({
           <div
             className="h-[600px] w-full overflow-y-auto grid grid-cols-3 gap-1"
             id="childDiv"
+            ref={scrollDiv}
           >
             {/* Fixed height and vertical scroll */}
 
@@ -485,8 +510,8 @@ function ViewLoadVidoes({
                         : group.fileDatas.length === 3
                         ? 'grid-cols-3'
                         : group.fileDatas.length === 2
-                        ? 'grid-cols-2'
-                        : 'grid-cols-2'
+                        ? 'grid-cols-1'
+                        : 'grid-cols-1'
                     }`}
                   >
                     {group.fileDatas.map((items, index) => (

@@ -9,9 +9,14 @@ import { MdOutlineDelete } from 'react-icons/md';
 import DeleteFiles from '../components/deleteFile';
 import { FaChevronRight } from 'react-icons/fa6';
 import Sppiner from '@/Components/Spiner';
-import MapLocation from '../components/Maps';
 import ViewImage from '../components/viewImage';
 import DeleteMultipleFiles from '../components/deleteMultiple';
+import dynamic from 'next/dynamic';
+
+// Dynamically import the VideoMapLocation component without SSR
+const MapLocation = dynamic(() => import('../components/Maps'), {
+  ssr: false,
+});
 
 /*export const metadata = {
   title: 'Images',

@@ -1,10 +1,11 @@
 'use client';
+import { apiLink } from '@/API/API CALLS';
 import U_Button from '@/Components/Button';
 import Sppiner from '@/Components/Spiner';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
-export default function page({ adminData, setReloadApproveData }) {
+export default function Page({ adminData, setReloadApproveData }) {
   const [email, setEmail] = useState();
   const [approval, setApproval] = useState(false);
   const [header, setHeader] = useState('');
@@ -23,7 +24,7 @@ export default function page({ adminData, setReloadApproveData }) {
   }
   return (
     <div className="bg-white w-full h-full">
-      {adminData.length > 0 ? (
+      {adminData?.length > 0 ? (
         <div className="w-full h-full p-8">
           {approval && (
             <ApprovalBox
@@ -142,21 +143,18 @@ function ApprovalBox({ CancleBox, email, header, reject }) {
     const token = sessionStorage.getItem('cookies');
     try {
       setLoading(true);
-      const response = await fetch(
-        `http://127.1.0.1:8000/v1/memories/users/admin/reject/${email}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ email: email }),
-        }
-      );
+      const response = await fetch(`${apiLink}/users/admin/reject/${email}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ email: email }),
+      });
       if (!response.ok) {
         setLoading(false);
         const errMessage = await response.json();
-        throw new Error('Something went wrong ' + err.message);
+        throw new Error('Something went wrong ' + errMessage.message);
       }
       const data = await response.json();
       setLoading(false);
