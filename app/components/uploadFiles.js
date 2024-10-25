@@ -3,12 +3,15 @@ import U_Button from '@/Components/Button';
 import U_input from '@/Components/Input';
 import { useEffect, useState } from 'react';
 import UploadFilesNotifications from './uploadingFiles';
+import { TotalSize } from './storage';
 
 export default function UploadFiles({ setUploadBox, Type }) {
   const [modelOpen, setModelOpen] = useState(false);
   const [uploadFiles, setUploadFiles] = useState([]);
   const [progress, setProgress] = useState(0); // Track upload progress
   const [progressTrue, setProgressTrue] = useState(false);
+  const userCurrentSize = TotalSize();
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
     setModelOpen(true);
@@ -23,8 +26,15 @@ export default function UploadFiles({ setUploadBox, Type }) {
   }
 
   async function UploadImagesandVideos() {
+    if (Number(userCurrentSize.split('G')[0]) >= 50) {
+      setMessage('Storage is Full. Contact the admin');
+      return console.log('Strorage Full');
+    }
     setProgressTrue(true);
-    if (uploadFiles.length < 1) return console.log('this is empty');
+
+    if (uploadFiles.length < 1) {
+      return console.log('this is empty');
+    }
     const formData = new FormData();
     for (let index = 0; index < uploadFiles.length; index++) {
       formData.append('files', uploadFiles[index]);
@@ -56,6 +66,7 @@ export default function UploadFiles({ setUploadBox, Type }) {
         setProgressTrue(false);
       } else {
         console.error('Upload failed');
+        setProgressTrue(false);
         console.error(xhr.responseText); // Log the error response
       }
     };
@@ -71,7 +82,7 @@ export default function UploadFiles({ setUploadBox, Type }) {
     <div
       className={`relative flex justify-center items-center h-4/5 w-full ${
         modelOpen ? 'scale-100' : 'scale-0'
-      } transition duration-500 ease-in-out`}
+      } transition duration-500 ease-in-out max-sm:h-full`}
     >
       <div className=" w-full h-full rounded-[50px] bg-amber-300 flex flex-col items-center justify-center border-8 border-yellow-200">
         <span className="font-bold">Upload {Type} </span>
@@ -83,8 +94,11 @@ export default function UploadFiles({ setUploadBox, Type }) {
               multiple
               OnChange={(e) => setUploadFiles(e.target.files)}
             />
-            <U_Button b_name={'Upload'} b_function={UploadImagesandVideos} />
+            {uploadFiles.length > 0 && (
+              <U_Button b_name={'Upload'} b_function={UploadImagesandVideos} />
+            )}{' '}
             <U_Button b_name={'Cancle'} b_function={ClosePopUp} />
+            <span className="font-bold text-red-600 uppercase">{message}</span>
           </div>
         ) : (
           ''

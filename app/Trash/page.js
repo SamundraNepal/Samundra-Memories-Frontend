@@ -126,22 +126,15 @@ export default function Page() {
               <div className="p-4 border-b-2 border-amber-800 bg-gradient-to-r from-amber-50 via-amber-500 to-amber-50">
                 <div className="flex justify-between items-center">
                   {isSelected.length > 0 && (
-                    <div className="flex gap-10 text-slate-400">
+                    <div className="flex flex-row gap-4 text-slate-900 max-sm:flex-col">
                       <span className="font-bold">
                         Selected : {isSelected.length}
                       </span>
                       <div
                         className="text-4xl cursor-pointer hover:text-slate-100"
-                        onClick={() => changeType('Delete')}
+                        onClick={() => setIsDeleteAll(true)}
                       >
                         <MdOutlineDelete />
-                      </div>
-
-                      <div
-                        className="text-4xl cursor-pointer hover:text-slate-100"
-                        onClick={() => changeType('Restore')}
-                      >
-                        <MdOutlineSettingsBackupRestore />
                       </div>
                     </div>
                   )}
@@ -156,7 +149,7 @@ export default function Page() {
                 {totalFiles.length > 0 ? (
                   <div
                     key={1}
-                    className="h-[600px] w-full overflow-y-auto grid grid-cols-6 gap-2 p-2"
+                    className="h-[650px] w-full overflow-y-auto grid grid-cols-6 gap-2 p-2 max-sm:grid-cols-2 max-sm:h-[700px]"
                   >
                     {/* Combine video and image files */}
                     {totalFiles.map((item, index) => (
@@ -172,7 +165,7 @@ export default function Page() {
                     ))}
                   </div>
                 ) : (
-                  <div className=" flex justify-center items-center   h-[600px] text-slate-300 text-6xl uppercase ">
+                  <div className=" flex justify-center items-center   h-[600px] text-slate-300 text-6xl uppercase max-sm:text-2xl">
                     <span className="-rotate-45">Nothing available</span>
                   </div>
                 )}
@@ -192,7 +185,7 @@ export default function Page() {
           )}
         </div>
       ) : (
-        <Sppiner />
+        <Sppiner Size="p-20" />
       )}
     </>
   );

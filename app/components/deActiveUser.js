@@ -73,9 +73,9 @@ export default function DeActiveUser({
 
   return (
     <div
-      className={`absolute flex justify-center items-center h-2/5 p-10 w-2/5 ${
+      className={`absolute flex justify-center items-center mt-40 h-2/5 p-10 w-2/5 ${
         modelOpen ? 'scale-100' : 'scale-0'
-      } transition duration-500 ease-in-out`}
+      } transition duration-500 ease-in-out max-sm:w-[450px]`}
     >
       <div className="w-full h-full rounded-[50px] bg-gradient-to-t from-amber-50 via-amber-500 to-amber-50">
         {!loading ? (

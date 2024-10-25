@@ -43,7 +43,7 @@ export default function HandleForgotPassword({
   }
   return (
     <>
-      <div className=" rounded-[10px] border-[10px] border-green-200 flex flex-col justify-center items-center gap-10 h-full w-full">
+      <div className=" rounded-[10px] border-[10px] border-amber-500 flex flex-col justify-center items-center gap-10 h-full w-full">
         <title>Memories/ForgotPassword</title>
 
         <div>
@@ -52,7 +52,7 @@ export default function HandleForgotPassword({
           </header>
         </div>
         {!foundAccount ? (
-          <div className="w-3/5">
+          <div className="w-3/5 max-sm:w-full">
             {!loading ? (
               <div className="">
                 <div className="flex flex-col gap-5 justify-center items-center bg-gradient-to-r from-amber-50 via-amber-500 to-amber-50 rounded-[10px]">
@@ -142,7 +142,7 @@ function AccountFound({ accountDetails, setForgotPassword }) {
 
   if (accountDetails === undefined) return <div>Nothing avalaibe</div>;
   return (
-    <div className="bg-amber-200 h-4/5 w-3/5 rounded-[10px]">
+    <div className="bg-amber-200 h-4/5 w-3/5 rounded-[10px] max-sm:w-11/12">
       <title>Memories/ResetPassword</title>
 
       <div>
@@ -159,16 +159,19 @@ function AccountFound({ accountDetails, setForgotPassword }) {
   "
               height={50}
               width={50}
-              src={accountDetails?.imageLink.replace('}', ' ')}
+              src={accountDetails?.imageLink?.replace('}', ' ')}
               alt="user image"
             />
           </div>
         </div>
         <div className="flex justify-center h-full w-full">
           {!loading ? (
-            <div className=" w-3/5">
+            <div className=" w-3/5 max-sm:w-4/5">
               {!success ? (
-                <form className="flex flex-col gap-2" onSubmit={updatePassword}>
+                <form
+                  className="flex flex-col gap-2 justify-center max-sm:mt-20"
+                  onSubmit={updatePassword}
+                >
                   <label>Code</label>
                   <U_input
                     PlaceHolder="Enter Six digit code"
@@ -201,7 +204,7 @@ function AccountFound({ accountDetails, setForgotPassword }) {
                   <U_Button b_name="Reset" />
                 </form>
               ) : (
-                <div className=" flex flex-col items-center justify-center gap-10">
+                <div className=" flex w-full h-[400px] items-center justify-center">
                   <h2>{message} </h2>
 
                   <Link href="/">

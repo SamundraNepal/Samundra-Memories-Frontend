@@ -108,7 +108,7 @@ export default function Page({ setSignUp }) {
           <title>Memories/SignUp</title>
 
           {!result ? (
-            <div className="bg-amber-500 rounded-[10px] w-4/5 flex justify-center text-slate-50 bg-opacity-50">
+            <div className="bg-amber-500 rounded-[10px] w-4/5 flex justify-center text-slate-50 bg-opacity-50 max-sm:w-11/12">
               <div className="flex flex-col w-3/5 ">
                 <div>
                   <h1 className="text-xl mt-5">
@@ -203,7 +203,9 @@ export default function Page({ setSignUp }) {
                       <U_Button b_name={'Back'} b_function={back} />
                     </Link>
 
-                    <U_Button b_name={'Create Account'} />
+                    <div>
+                      <U_Button b_name={'Create Account'} />
+                    </div>
                   </div>
                 </form>
               </div>
@@ -269,8 +271,8 @@ function UploadImage({
                 </button>
               </div>
             ) : (
-              <div className="flex flex-col justify-center items-center gap-5">
-                <h3 className="text-white uppercase">{message}</h3>
+              <div className="flex flex-col justify-center gap-10 items-center w-full">
+                <h3 className="text-white uppercase">{message} hello test</h3>
                 <U_Button
                   b_name={'Log In'}
                   b_function={(e) => setSignUp(false)}

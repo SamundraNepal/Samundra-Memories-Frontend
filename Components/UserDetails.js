@@ -51,7 +51,7 @@ export default function UserDetails({
   return (
     <>
       {!loading ? (
-        <div className={`relative z-50 `}>
+        <div className={`relative z-50`}>
           <div className="flex gap-1 justify-center items-center">
             <button onClick={openUserSettings}>
               <Image
@@ -133,7 +133,7 @@ export default function UserDetails({
           )}
         </div>
       ) : (
-        <Sppiner Size="p-1" width="" />
+        <div></div>
       )}
     </>
   );

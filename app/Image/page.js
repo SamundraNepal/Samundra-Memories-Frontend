@@ -12,6 +12,7 @@ import Sppiner from '@/Components/Spiner';
 import ViewImage from '../components/viewImage';
 import DeleteMultipleFiles from '../components/deleteMultiple';
 import dynamic from 'next/dynamic';
+import { GoUpload } from 'react-icons/go';
 
 // Dynamically import the VideoMapLocation component without SSR
 const MapLocation = dynamic(() => import('../components/Maps'), {
@@ -156,7 +157,7 @@ export default function Page() {
               <div className="p-4 border-b-2 border-amber-800 bg-gradient-to-r from-amber-50 via-amber-500 to-amber-50">
                 <div className="flex justify-between items-center">
                   {isSelected.length > 0 && (
-                    <div className="flex gap-10 text-slate-400">
+                    <div className="flex flex-row gap-4 text-slate-900 max-sm:flex-col">
                       <span className="font-bold">
                         Selected : {isSelected.length}
                       </span>
@@ -170,12 +171,14 @@ export default function Page() {
                   )}
 
                   {/* Title */}
-                  <div className="uppercase font-bold text-xl text-center flex-grow">
-                    <span>Photos 📸</span>
+                  <div className="uppercase font-bold text-l text-center flex-grow">
+                    <span>Photos</span>
                   </div>
                   {/* Button */}
-                  <div className="ml-4">
-                    <U_Button b_name={'Upload📷'} b_function={UploadImageBox} />
+                  <div className="ml-4 text-3xl">
+                    <div className="cursor-pointer border-4 border-amber-500 rounded-full p-1 text-black">
+                      <GoUpload onClick={UploadImageBox} />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -223,7 +226,7 @@ function ViewLoadImages({ data, viewImage, handleSelectedFiles }) {
     <div className="h-full w-full transition-all duration-300">
       {data?.length > 0 ? (
         <div
-          className="h-[600px] w-full overflow-y-auto grid grid-cols-3 gap-1"
+          className="h-[650px] w-full overflow-y-auto grid grid-cols-3 gap-1 max-sm:grid-cols-3 max-sm:h-[700px]"
           id="childDiv"
         >
           {/* Fixed height and vertical scroll */}
@@ -234,12 +237,12 @@ function ViewLoadImages({ data, viewImage, handleSelectedFiles }) {
               className={`${
                 !group._id ? 'scale-0' : 'scale-100'
               } transition-transform duration-300 flex flex-col p-2 ${
-                group.fileDatas.length > 5 ? 'col-span-3' : ''
+                group.fileDatas.length > 5 ? 'col-span-3' : 'max-sm:col-span-3'
               }`}
             >
               {/* Display group ID */}
 
-              <div className="flex justify-start font-bold text-slate-300">
+              <div className="flex justify-start font-bold text-slate-500">
                 <span>{group.fileDatas.length > 0 && group._id}</span>
               </div>
 
@@ -255,7 +258,7 @@ function ViewLoadImages({ data, viewImage, handleSelectedFiles }) {
                     ? 'grid-cols-3'
                     : group.fileDatas.length === 2
                     ? 'grid-cols-2'
-                    : 'grid-cols-2'
+                    : 'grid-cols-1'
                 }`}
               >
                 {group.fileDatas.map((items, index) => (
@@ -274,7 +277,7 @@ function ViewLoadImages({ data, viewImage, handleSelectedFiles }) {
           ))}
         </div>
       ) : (
-        <div className=" flex justify-center items-center w-full h-[600px] text-slate-300 text-6xl uppercase">
+        <div className=" flex justify-center items-center w-full h-[600px] text-slate-300 text-6xl uppercase max-sm:text-xl">
           <span className="-rotate-45">Upload Images to view</span>
         </div>
       )}
@@ -294,7 +297,7 @@ function ImageFullScreen({
   const [loading, setLoading] = useState(true);
   const [imageDetails, setImageDetails] = useState({});
   const [details, setDetails] = useState(false);
-  const [barAnimation, setBarAnimation] = useState(true);
+  const [barAnimation, setBarAnimation] = useState(false);
   const [openAnim, setOpenAnim] = useState(false);
   const [deleteFile, setDeleteFile] = useState(false);
   const [imageChanged, setImageChanged] = useState(false);
@@ -318,15 +321,19 @@ function ImageFullScreen({
   }, [currentIndex, currentIndexOne]);
 
   function openDetailPage() {
-    setDetails((prev) => !prev);
+    if (!details) {
+      setDetails(true);
 
-    setTimeout(() => {
-      if (details) {
-        setBarAnimation(true);
-      } else {
-        setBarAnimation(false);
-      }
-    }, 20);
+      setTimeout(() => {
+        setBarAnimation((prev) => !prev);
+      }, 300);
+    } else {
+      setBarAnimation((prev) => !prev);
+
+      setTimeout(() => {
+        setDetails((prev) => !prev);
+      }, 300);
+    }
   }
 
   function imageCarasouleForward() {
@@ -388,18 +395,18 @@ function ImageFullScreen({
     <>
       {
         <div
-          className={`w-full h-full transition duration-200 ${
+          className={`h-full w-full transition-transform transform duration-300 ease-in-out ${
             openAnim ? 'scale-100' : 'scale-0'
           }`}
         >
           {!loading ? (
             <div className="w-full h-full bg-black flex">
               {details ? (
-                <div className="flex items-start">
+                <div className="flex items-start max-sm:z-50 relative">
                   <div
-                    className={`text-black  bg-slate-50 p-1 h-full rounded-[10px] gap-4 border-r-8 border-yellow-600 transition-transform duration-500 ease-in-out ${
-                      barAnimation ? '-translate-x-[1500px]' : 'translate-x-0'
-                    }`}
+                    className={`text-black bg-slate-50 p-1 h-full rounded-[10px] gap-4 border-r-8 border-yellow-600 transition-transform duration-500 ease-in-out ${
+                      barAnimation ? 'scale-100' : 'scale-0'
+                    } max-sm:w-[410px] bg-opacity-90 z-20`}
                   >
                     <div className="flex flex-col gap-5">
                       <div>
@@ -445,8 +452,8 @@ function ImageFullScreen({
                   </div>
                 </div>
               ) : (
-                <div className="text-white h-1/5 flex items-center gap-5 mt-2 p-2">
-                  <div className="flex bg-slate-50 rounded-[10px] border-4 text-amber-500">
+                <div className="absolute flex items-center justify-center gap-5 mt-1 p-2 max-sm:absolute w-full z-10">
+                  <div className="flex bg-slate-500 rounded-[10px] border-2 text-slate-50 w-full justify-center bg-opacity-20">
                     <button
                       className="text-6xl flex justify-center hover:text-slate-500"
                       onClick={close}
@@ -469,14 +476,21 @@ function ImageFullScreen({
                   </div>
                 </div>
               )}
-              <div className="h-full w-full flex ">
-                <button
-                  className="text-white text-6xl rotate-180 hover:text-slate-500"
-                  onClick={(e) => imageCarasouleBackward()}
-                >
-                  {sliderL && <FaChevronRight />}{' '}
-                </button>
-                <div className="relative h-full w-full p-20">
+
+              <div className="w-full flex flex-row">
+                {!details && (
+                  <div className=" z-10 h-full w-1/5 flex">
+                    <button
+                      className="text-white text-6xl rotate-180 hover:text-slate-50"
+                      onClick={(e) => imageCarasouleBackward()}
+                    >
+                      {sliderL && <FaChevronRight />}
+                    </button>
+                  </div>
+                )}
+
+                <div className=" h-full w-full flex items-center justify-center">
+                  {/* p-40 to view delete files*/}
                   {deleteFile && (
                     <div className=" w-full h-full flex items-center justify-center">
                       <DeleteFiles
@@ -488,22 +502,30 @@ function ImageFullScreen({
                     </div>
                   )}
 
-                  <Image
-                    src={imageDetails?.imageURL}
-                    alt={'Image'}
-                    fill
-                    blurDataURL="https://i.pinimg.com/736x/8a/b2/1b/8ab21b1edaa6d6d3405af14cd018a91b.jpg"
-                    className={`object-contain transition-opacity duration-500 ${
-                      imageChanged ? 'opacity-0' : 'opacity-100'
-                    }`}
-                  />
+                  <div className="h-full">
+                    <Image
+                      src={imageDetails?.imageURL}
+                      loading="lazy"
+                      alt={'Image'}
+                      fill
+                      blurDataURL="https://i.pinimg.com/736x/8a/b2/1b/8ab21b1edaa6d6d3405af14cd018a91b.jpg"
+                      className={`object-contain transition-opacity duration-500 ${
+                        imageChanged ? 'opacity-0' : 'opacity-100'
+                      }`}
+                    />
+                  </div>
                 </div>
-                <button
-                  className="text-white text-6xl  hover:text-slate-500"
-                  onClick={(e) => imageCarasouleForward()}
-                >
-                  {slider && <FaChevronRight />}
-                </button>
+
+                {!details && (
+                  <div className=" z-10 h-full w-1/5 flex">
+                    <button
+                      className="text-white text-6xl  hover:text-slate-500"
+                      onClick={(e) => imageCarasouleForward()}
+                    >
+                      {slider && <FaChevronRight />}
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           ) : (

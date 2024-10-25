@@ -72,9 +72,9 @@ export default function ChangePassword({ setChnagePasswordPopUp }) {
 
   return (
     <div
-      className={`absolute flex justify-center items-center h-3/5 p-10 w-3/5 ${
+      className={`absolute flex justify-center items-center mt-20 h-3/5 p-10 w-3/5 ${
         modelOpen ? 'scale-100' : 'scale-0'
-      } transition duration-500 ease-in-out`}
+      } transition duration-500 ease-in-out max-sm:w-[450px]`}
     >
       <div className=" w-full h-full rounded-[50px] bg-gradient-to-t from-amber-100 via-amber-600 to-amber-100 ">
         {!loading ? (

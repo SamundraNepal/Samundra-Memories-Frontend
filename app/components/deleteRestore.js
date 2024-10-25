@@ -84,7 +84,7 @@ export default function DeleteRestoreFiles({
     <div
       className={`absolute z-50 flex justify-center items-center h-2/5 p-10 w-2/5 ${
         modelOpen ? 'scale-100' : 'scale-0'
-      } transition duration-500 ease-in-out`}
+      } transition duration-500 ease-in-out max-sm:w-[420px] ml-4`}
     >
       <div className="w-full h-full rounded-[50px] bg-amber-300">
         {!loading ? (

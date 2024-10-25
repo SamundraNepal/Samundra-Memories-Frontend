@@ -11,9 +11,10 @@ import ChangePassword from './components/changePassword';
 import DeActiveUser from './components/deActiveUser';
 import Page from './adminPage/page';
 import ChangeProfilePicture from './components/profilePicture';
+import SideBarHandler from './components/sidebarHandler';
 
 export default function RootLayout({ children }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [signUp, setSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -30,6 +31,7 @@ export default function RootLayout({ children }) {
     email: '',
   });
 
+  const [sideBarOpen, setSideBar] = useState(true);
   // const router = useRouter();
 
   useEffect(() => {
@@ -65,9 +67,15 @@ export default function RootLayout({ children }) {
               setChnagePasswordPopUp={setChnagePasswordPopUp}
               setDeActivateUser={setDeActivateUser}
               setChangeProfilePic={setChangeProfilePic}
+              sideBarOpen={sideBarOpen}
+              setSideBar={setSideBar}
             />
 
-            <SideBar isAdmin={isAdmin} />
+            <SideBar
+              isAdmin={isAdmin}
+              sideBarOpen={sideBarOpen}
+              setSideBar={setSideBar}
+            />
 
             <div className="rounded-[10px] bg-green-50 flex justify-center">
               {!loading ? (
@@ -82,7 +90,9 @@ export default function RootLayout({ children }) {
                   )}
                 </main>
               ) : (
-                <Sppiner />
+                <div>
+                  <Sppiner />
+                </div>
               )}
               {changePasswordPopUp && (
                 <ChangePassword
@@ -104,7 +114,7 @@ export default function RootLayout({ children }) {
             </div>
 
             <footer className="bg-gradient-to-r from-amber-100 via-amber-500 to-amber-100 col-span-3 p-1 rounded flex justify-center border-t-4 border-amber-500">
-              <strong>MEMORIES COPYRIGHT</strong>
+              <strong>MEMORIES ©</strong>
             </footer>
           </div>
         ) : (
@@ -127,16 +137,19 @@ function Header({
   setChnagePasswordPopUp,
   setDeActivateUser,
   setChangeProfilePic,
+  sideBarOpen,
+  setSideBar,
 }) {
   return (
     <header className="bg-gradient-to-r from-amber-500 via-amber-200 to-amber-500 col-span-3 p-5 border-b-4 border-amber-500">
-      <div className="flex justify-center items-center">
+      <div className="flex justify-center items-center h-4/5 w-4/5 ">
         <strong>MEMORIES</strong>
       </div>
       {/*   {!isAdmin && (
     <SearchBar placeholder="Search for Photos and Videos" />
   )}*/}
-      <div className="flex justify-end">
+
+      <div className=" absolute right-4 top-2">
         <UserDetails
           UserDetail={UserDetail}
           setIsAuthenticated={setIsAuthenticated}
@@ -146,14 +159,26 @@ function Header({
           setChangeProfilePic={setChangeProfilePic}
         />
       </div>
+
+      <div className="absolute top-8 left-4">
+        <SideBarHandler sideBarOpen={sideBarOpen} setSideBar={setSideBar} />
+      </div>
     </header>
   );
 }
 
-function SideBar({ isAdmin }) {
+function SideBar({ isAdmin, sideBarOpen, setSideBar }) {
   return (
-    <aside className="bg-gradient-to-t from-amber-100 via-amber-500 to-amber-100 col-start-1 col-span-1 w-40 border-r-4 border-amber-500">
-      <strong>{!isAdmin && <Navigation />} </strong>
+    <aside
+      className={`bg-gradient-to-t from-amber-100 via-amber-500 to-amber-100 col-start-1 col-span-1 ${
+        sideBarOpen ? 'w-40' : 'w-4'
+      } duration-500  border-r-4 border-amber-500 max-sm: ${
+        sideBarOpen ? 'w-[420px]' : 'w-1'
+      }`}
+    >
+      <strong>
+        {!isAdmin && sideBarOpen && <Navigation setSideBar={setSideBar} />}
+      </strong>
     </aside>
   );
 }

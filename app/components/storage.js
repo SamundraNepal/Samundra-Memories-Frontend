@@ -28,9 +28,9 @@ export const TotalSize = () => {
         // Convert to GB if larger than 100MB
         if (totalSizes > 100) {
           const gbSize = (totalSizes / 1024).toFixed(2);
-          setSizes(gbSize + ' GB');
+          setSizes(gbSize + 'GB');
         } else {
-          setSizes(totalSizes || 0 + ' MB');
+          setSizes((totalSizes || 0) + 'MB');
         }
       } catch (err) {
         console.error('Failed to get the size data', err);
@@ -48,7 +48,7 @@ export default function StorageTotal() {
   const size = TotalSize();
 
   return (
-    <div className="flex flex-col border-4 rounded-[10px] border-amber-500 bg-slate-50">
+    <div className="flex flex-col justify-center items-center border-4 rounded-[10px] border-amber-500 bg-slate-50">
       <div className="flex">
         <TiCloudStorageOutline className="text-5xl" />
       </div>

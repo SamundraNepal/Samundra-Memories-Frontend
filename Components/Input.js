@@ -18,7 +18,7 @@ export default function U_input({
       onChange={OnChange}
       accept={accept}
       multiple={multiple}
-      className={`p-2 rounded text-black bg-slate-200 ${Size} border-none outline-none focus:ring focus:ring-green-50`}
+      className={`p-2 rounded text-black bg-slate-200 ${Size} border-none outline-none focus:ring focus:ring-green-50 max-sm:w-full`}
     />
   );
 }

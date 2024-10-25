@@ -88,7 +88,7 @@ export default function DeleteMultipleFiles({
     <div
       className={`absolute z-50 flex justify-center items-center h-2/5 p-10 w-2/5 ${
         modelOpen ? 'scale-100' : 'scale-0'
-      } transition duration-500 ease-in-out`}
+      } transition duration-500 ease-in-out max-sm:w-full`}
     >
       <div className="w-full h-full rounded-[50px] bg-amber-300">
         {!loading ? (
@@ -107,7 +107,7 @@ export default function DeleteMultipleFiles({
                 failed ? 'text-red-500' : 'text-white'
               }`}
             ></div>
-            <div className="flex gap-2 justify-center items-center h-full">
+            <div className="flex gap-2 justify-center items-center h-full w-full">
               <U_Button
                 b_name={'Yes'}
                 b_function={handleDeleteFiles}

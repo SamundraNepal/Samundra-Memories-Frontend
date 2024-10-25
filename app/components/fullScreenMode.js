@@ -25,7 +25,7 @@ export default function FullScreen({
 }) {
   const [imageDetails, setImageDetails] = useState({});
   const [details, setDetails] = useState(false);
-  const [barAnimation, setBarAnimation] = useState(true);
+  const [barAnimation, setBarAnimation] = useState(false);
   const [openAnim, setOpenAnim] = useState(false);
   const [deleteFile, setDeleteFile] = useState(false);
   const [restoreFile, setRestoreFile] = useState(false);
@@ -48,15 +48,19 @@ export default function FullScreen({
   }, [currentIndex]);
 
   function openDetailPage() {
-    setDetails((prev) => !prev);
+    if (!details) {
+      setDetails(true);
 
-    setTimeout(() => {
-      if (details) {
-        setBarAnimation(true);
-      } else {
-        setBarAnimation(false);
-      }
-    }, 20);
+      setTimeout(() => {
+        setBarAnimation((prev) => !prev);
+      }, 300);
+    } else {
+      setBarAnimation((prev) => !prev);
+
+      setTimeout(() => {
+        setDetails((prev) => !prev);
+      }, 300);
+    }
   }
 
   function imageCarasouleForward() {
@@ -100,13 +104,13 @@ export default function FullScreen({
         openAnim ? 'scale-100' : 'scale-0'
       }`}
     >
-      <div className="w-full h-full bg-black flex">
+      <div className="w-full h-full bg-black flex transition-all duration-300">
         {details ? (
-          <div className="flex items-start">
+          <div className="flex items-start max-sm:z-50 w-full h-full ">
             <div
-              className={`text-black  bg-slate-50 p-1 h-full rounded-[10px] gap-4 border-r-8 border-yellow-600 transition-transform duration-500 ease-in-out ${
-                barAnimation ? 'translate-x-[600px]' : 'translate-x-0'
-              }`}
+              className={`text-black bg-slate-50 p-1 h-full rounded-[10px] gap-4 border-r-8 border-yellow-600 transition-transform duration-500 ease-in-out ${
+                barAnimation ? 'scale-100' : 'scale-0'
+              } max-sm:w-[410px] bg-opacity-80 z-20`}
             >
               <div className="flex flex-col gap-5">
                 <div>
@@ -162,8 +166,8 @@ export default function FullScreen({
             </div>
           </div>
         ) : (
-          <div className=" h-1/5 flex items-center gap-5 mt-2 p-2 text-amber-500">
-            <div className="flex bg-slate-50 rounded-[10px] border-4">
+          <div className="absolute flex items-center justify-center gap-5 mt-1 p-2 max-sm:absolute w-full z-10">
+            <div className="flex bg-slate-500 rounded-[10px] border-2 text-slate-50 w-full justify-center bg-opacity-20">
               <button
                 className="text-6xl flex justify-center hover:text-slate-500"
                 onClick={close}
@@ -193,17 +197,21 @@ export default function FullScreen({
             </div>
           </div>
         )}
-        <div className="h-full w-full flex ">
-          <button
-            className="text-white text-6xl rotate-180 hover:text-slate-500"
-            onClick={(e) => imageCarasouleBackward()}
-          >
-            {sliderL && <FaChevronRight />}{' '}
-          </button>
+        <div className="h-full w-full flex flex-row">
+          {!details && (
+            <div className="h-full w-1/5 flex items-center">
+              <button
+                className="text-white text-6xl rotate-180 hover:text-slate-500 z-10 h-1/5"
+                onClick={(e) => imageCarasouleBackward()}
+              >
+                {sliderL && <FaChevronRight />}
+              </button>
+            </div>
+          )}
 
-          <div className="relative h-full w-full flex justify-center">
+          <div className=" h-full w-full flex justify-center">
             {(deleteFile || restoreFile) && imageDetails?.viodeoName && (
-              <div className="w-full h-full flex items-center justify-center">
+              <div className=" w-full h-full flex items-center justify-center">
                 <DeleteFiles
                   Type={'Videos'} //this is set like this cuz depending on the type of media it does works
                   choice={restoreFile ? 'Restore' : 'P_Delete'}
@@ -222,7 +230,7 @@ export default function FullScreen({
             )}
 
             {imageDetails?.viodeoName && (
-              <div className=" w-full h-full flex justify-center absolute">
+              <div className="h-full flex justify-center absolute max-sm:absolute">
                 <video
                   src={imageDetails?.videoURL || ''}
                   alt={'video playing'}
@@ -237,7 +245,7 @@ export default function FullScreen({
             )}
 
             {(deleteFile || restoreFile) && !imageDetails?.viodeoName && (
-              <div className="w-full h-full flex items-center justify-center">
+              <div className=" w-full h-full flex items-center justify-center">
                 <DeleteFiles
                   choice={restoreFile ? 'Restore' : 'P_Delete'}
                   imageDetails={imageDetails}
@@ -256,21 +264,27 @@ export default function FullScreen({
 
             {!imageDetails.viodeoName && (
               <Image
-                src={imageDetails?.imageURL || ''}
+                src={imageDetails?.imageURL}
                 alt={'Image'}
                 fill
+                loading="lazy"
                 className={`object-contain transition-opacity duration-500 ${
                   imageChanged ? 'opacity-0' : 'opacity-100'
                 }`}
               />
             )}
           </div>
-          <button
-            className="text-white text-6xl  hover:text-slate-500"
-            onClick={(e) => imageCarasouleForward()}
-          >
-            {slider && <FaChevronRight />}
-          </button>
+
+          {!details && (
+            <div className=" z-10 h-full w-1/5 flex">
+              <button
+                className="text-white text-6xl  hover:text-slate-500"
+                onClick={(e) => imageCarasouleForward()}
+              >
+                {slider && <FaChevronRight />}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
