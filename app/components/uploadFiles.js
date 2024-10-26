@@ -40,7 +40,10 @@ export default function UploadFiles({ setUploadBox, Type }) {
       formData.append('files', uploadFiles[index]);
     }
 
+
     const xhr = new XMLHttpRequest();
+    xhr.timeout = (1000 * 60) * 5 //5 minute initial timeout timer.
+
     if (Type === 'Photos') {
       xhr.open('POST', `${apiLink}/images/upload`, true);
     } else if (Type === 'Videos') {
@@ -72,7 +75,11 @@ export default function UploadFiles({ setUploadBox, Type }) {
     };
 
     xhr.onerror = function () {
-      throw new Error('Upload error occurred.' + xhr.responseText);
+      setProgressTrue(false);
+
+      console.log('Upload error occurred.', xhr.status, xhr.statusText, xhr.responseText)
+      throw new Error('Upload error occurred.', xhr.status, xhr.statusText, xhr.responseText);
+
     };
 
     xhr.send(formData);

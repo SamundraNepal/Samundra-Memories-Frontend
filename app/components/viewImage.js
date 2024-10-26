@@ -34,12 +34,12 @@ export default function ViewImage({
       <Tick setIsTicked={setIsTicked} />
       <div key={index} onClick={(e) => viewImage(items, indexOne, index)}>
         <Image
-          src={items?.imageURL}
           alt={items.imageName}
+          placeholder='blur'
+          blurDataURL={"../../253.jpg"}
           width={400}
           height={400}
           quality={10}
-          blurDataURL="https://i.pinimg.com/736x/8a/b2/1b/8ab21b1edaa6d6d3405af14cd018a91b.jpg"
           className={`border-4 hover:border-green-500  cursor-pointer transition-all duration-300 ${
             isTick ? 'p-2' : 'p-0'
           }`}

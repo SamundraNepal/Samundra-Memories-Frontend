@@ -42,16 +42,21 @@ export default function Page() {
     GetloadVideos();
     setTimeout(() => {
       setScrollDiv(document.getElementById('childDiv'));
-    }, 100);
+    }, 500);
+    
   }, []);
 
+  console.log(scrollDiv);
+
   scrollDiv?.addEventListener('scroll', (event) => {
+
+    console.log('here');
     event.preventDefault();
     const scrollHeight = scrollDiv.scrollHeight;
     const totalHeight = scrollDiv.scrollTop + scrollDiv.clientHeight;
 
     if (totalHeight + 1 >= scrollHeight) {
-      setPage((prev) => prev + 1);
+      setPage((prev) => prev + 5);
     }
   });
 
@@ -251,7 +256,7 @@ function ViewLoadImages({ data, viewImage, handleSelectedFiles }) {
                 key={indexOne}
                 className={`grid w-full ${
                   group.fileDatas.length >= 5
-                    ? 'grid-cols-6'
+                    ? 'grid-cols-6 max-sm:grid-cols-3'
                     : group.fileDatas.length === 4
                     ? 'grid-cols-4'
                     : group.fileDatas.length === 3
@@ -505,7 +510,6 @@ function ImageFullScreen({
                   <div className="h-full">
                     <Image
                       src={imageDetails?.imageURL}
-                      loading="lazy"
                       alt={'Image'}
                       fill
                       blurDataURL="https://i.pinimg.com/736x/8a/b2/1b/8ab21b1edaa6d6d3405af14cd018a91b.jpg"

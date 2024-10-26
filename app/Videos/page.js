@@ -1,5 +1,4 @@
 'use client';
-import U_Button from '@/Components/Button';
 import { useEffect, useRef, useState } from 'react';
 import UploadFiles from '../components/uploadFiles';
 import { loadVideos } from '@/API/API CALLS';
@@ -27,47 +26,30 @@ export default function Page() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentIndexOne, setCurrentIndexOne] = useState(0);
   const [page, setPage] = useState(10);
-  const scrollDiv = useRef(null);
   const [onLoadCompleteVideo, setOnLoadCompleteVideo] = useState(false);
   const [isSelected, setIsSelected] = useState([]);
   const [isDeleteAll, setIsDeleteAll] = useState(false);
-
+  const [scrollDiv, setScrollDiv] = useState();
   const data = filesData.slice(0, page);
 
   useEffect(() => {
     GetloadVideos();
+    setTimeout(() => {
+      setScrollDiv(document.getElementById('childDiv'));
+    }, 500);
+    
   }, []);
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const timer = setTimeout(() => {
-        // Check if scrollDiv is defined
-        if (!scrollDiv.current) return;
-
-        const handleScroll = (event) => {
-          event.preventDefault();
-          const scrollHeight = scrollDiv.current.scrollHeight;
-          const totalHeight =
-            scrollDiv.current.scrollTop + scrollDiv.current.clientHeight;
-
-          if (totalHeight >= scrollHeight) {
-            setPage((cur) => cur + 5);
-          }
-        };
-
-        const div = scrollDiv.current;
-        div.addEventListener('scroll', handleScroll);
-
-        // Cleanup function to remove the event listener
-        return () => {
-          div.removeEventListener('scroll', handleScroll);
-        };
-      }, 100);
-
-      // Cleanup for the timer
-      return () => clearTimeout(timer);
+  scrollDiv?.addEventListener('scroll', (event) => {
+    event.preventDefault();
+    const scrollHeight = scrollDiv.scrollHeight;
+    const totalHeight = scrollDiv.scrollTop + scrollDiv.clientHeight;
+    if (totalHeight + 1 >= scrollHeight) {
+      setPage((prev) => prev + 5);
     }
-  }, [scrollDiv]);
+  });
+
+
 
   async function GetloadVideos() {
     try {
@@ -214,7 +196,6 @@ export default function Page() {
                 onLoadCompleteVideo={onLoadCompleteVideo}
                 viewImage={viewImage}
                 handleSelectedFiles={handleSelectedFiles}
-                scrollDiv={scrollDiv}
               />
             </div>
           ) : (
@@ -488,7 +469,6 @@ function ViewLoadVidoes({
   onLoadCompleteVideo,
   viewImage,
   handleSelectedFiles,
-  scrollDiv,
 }) {
   return (
     <div>
@@ -497,7 +477,6 @@ function ViewLoadVidoes({
           <div
             className="h-[650px] w-full overflow-y-auto grid grid-cols-3 gap-1 max-sm:grid-cols-3 max-sm:h-[700px]"
             id="childDiv"
-            ref={scrollDiv}
           >
             {/* Fixed height and vertical scroll */}
 
@@ -519,9 +498,9 @@ function ViewLoadVidoes({
                   <div
                     className={`grid w-full ${
                       group.fileDatas.length >= 5
-                        ? 'grid-cols-6'
+                        ? 'grid-cols-6 max-sm:grid-cols-3'
                         : group.fileDatas.length === 4
-                        ? 'grid-cols-4'
+                        ? 'grid-cols-4 '
                         : group.fileDatas.length === 3
                         ? 'grid-cols-3'
                         : group.fileDatas.length === 2

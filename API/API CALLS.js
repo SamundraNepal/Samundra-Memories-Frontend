@@ -61,7 +61,6 @@ export async function loadImages() {
       throw new Error('Following is the error : ' + errorMessage.message);
     }
     const data = await response.json();
-
     return data;
   } catch (err) {
     throw new Error('Failed to get the images : ' + err.message);
