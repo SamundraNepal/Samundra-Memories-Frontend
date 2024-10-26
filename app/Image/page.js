@@ -3,7 +3,7 @@ import U_Button from '@/Components/Button';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import UploadFiles from '../components/uploadFiles';
-import { loadImages } from '@/API/API CALLS';
+import { Base64Url, loadImages } from '@/API/API CALLS';
 import { CiCircleInfo, CiCircleChevLeft } from 'react-icons/ci';
 import { MdOutlineDelete } from 'react-icons/md';
 import DeleteFiles from '../components/deleteFile';
@@ -43,13 +43,9 @@ export default function Page() {
     setTimeout(() => {
       setScrollDiv(document.getElementById('childDiv'));
     }, 500);
-    
   }, []);
 
-  console.log(scrollDiv);
-
   scrollDiv?.addEventListener('scroll', (event) => {
-
     console.log('here');
     event.preventDefault();
     const scrollHeight = scrollDiv.scrollHeight;
@@ -220,13 +216,19 @@ export default function Page() {
           )}
         </div>
       ) : (
-        <Sppiner />
+        <Sppiner Size="p-20" />
       )}
     </>
   );
 }
 
 function ViewLoadImages({ data, viewImage, handleSelectedFiles }) {
+  function formatedate(dateString) {
+    const date = new Date(dateString);
+    const convertToString = String(date).slice(0, 15);
+    return convertToString;
+  }
+
   return (
     <div className="h-full w-full transition-all duration-300">
       {data?.length > 0 ? (
@@ -248,7 +250,9 @@ function ViewLoadImages({ data, viewImage, handleSelectedFiles }) {
               {/* Display group ID */}
 
               <div className="flex justify-start font-bold text-slate-500">
-                <span>{group.fileDatas.length > 0 && group._id}</span>
+                <span>
+                  {group.fileDatas.length > 0 && formatedate(group._id)}
+                </span>
               </div>
 
               {/* First 5 images */}
@@ -512,7 +516,8 @@ function ImageFullScreen({
                       src={imageDetails?.imageURL}
                       alt={'Image'}
                       fill
-                      blurDataURL="https://i.pinimg.com/736x/8a/b2/1b/8ab21b1edaa6d6d3405af14cd018a91b.jpg"
+                      placeholder="blur"
+                      blurDataURL={Base64Url}
                       className={`object-contain transition-opacity duration-500 ${
                         imageChanged ? 'opacity-0' : 'opacity-100'
                       }`}

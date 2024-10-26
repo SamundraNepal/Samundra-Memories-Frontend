@@ -14,7 +14,7 @@ import ChangeProfilePicture from './components/profilePicture';
 import SideBarHandler from './components/sidebarHandler';
 
 export default function RootLayout({ children }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [signUp, setSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);

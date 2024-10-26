@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Tick from './tick';
 import { useEffect, useState } from 'react';
+import { Base64Url } from '@/API/API CALLS';
 
 export default function ViewImage({
   index,
@@ -12,6 +13,7 @@ export default function ViewImage({
   const [isTick, setIsTicked] = useState(false);
   const [removeDuplicate, setIsDuplicate] = useState(false);
   const [showImage, setShowImage] = useState(false);
+
   useEffect(() => {
     setShowImage(true);
     if (isTick) {
@@ -34,16 +36,16 @@ export default function ViewImage({
       <Tick setIsTicked={setIsTicked} />
       <div key={index} onClick={(e) => viewImage(items, indexOne, index)}>
         <Image
+          src={items?.imageURL}
           alt={items.imageName}
-          placeholder='blur'
-          blurDataURL={"../../253.jpg"}
+          placeholder="blur"
+          blurDataURL={Base64Url}
           width={400}
           height={400}
           quality={10}
           className={`border-4 hover:border-green-500  cursor-pointer transition-all duration-300 ${
             isTick ? 'p-2' : 'p-0'
           }`}
-          priority
         />
 
         {/* onLoad={ShowImagesLoaded}

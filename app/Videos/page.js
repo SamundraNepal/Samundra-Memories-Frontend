@@ -37,7 +37,6 @@ export default function Page() {
     setTimeout(() => {
       setScrollDiv(document.getElementById('childDiv'));
     }, 500);
-    
   }, []);
 
   scrollDiv?.addEventListener('scroll', (event) => {
@@ -48,8 +47,6 @@ export default function Page() {
       setPage((prev) => prev + 5);
     }
   });
-
-
 
   async function GetloadVideos() {
     try {
@@ -211,7 +208,7 @@ export default function Page() {
           )}
         </div>
       ) : (
-        <Sppiner />
+        <Sppiner Size="p-20" />
       )}
     </>
   );
@@ -455,7 +452,7 @@ function ImageFullScreen({
               </div>
             </div>
           ) : (
-            <Sppiner />
+            <Sppiner Size="p-20" />
           )}
         </div>
       }
@@ -470,6 +467,12 @@ function ViewLoadVidoes({
   viewImage,
   handleSelectedFiles,
 }) {
+  function formatedate(dateString) {
+    const date = new Date(dateString);
+    const convertToString = String(date).slice(0, 15);
+    return convertToString;
+  }
+
   return (
     <div>
       <div className="h-full w-full transition-all duration-300">
@@ -491,7 +494,9 @@ function ViewLoadVidoes({
               >
                 <div>
                   <div className="flex justify-start font-bold text-slate-500">
-                    <span>{group.fileDatas.length > 0 && group._id}</span>
+                    <span>
+                      {group.fileDatas.length > 0 && formatedate(group._id)}
+                    </span>
                   </div>
 
                   {/* First 5 images */}
