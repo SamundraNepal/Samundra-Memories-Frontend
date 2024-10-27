@@ -1,9 +1,8 @@
 'use client';
-import U_Button from '@/Components/Button';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import UploadFiles from '../components/uploadFiles';
-import { Base64Url, loadImages } from '@/API/API CALLS';
+import { loadImages } from '@/API/API CALLS';
 import { CiCircleInfo, CiCircleChevLeft } from 'react-icons/ci';
 import { MdOutlineDelete } from 'react-icons/md';
 import DeleteFiles from '../components/deleteFile';
@@ -33,6 +32,7 @@ export default function Page() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentIndexOne, setCurrentIndexOne] = useState(0);
   const [page, setPage] = useState(10);
+  const [subPage, setSubPage] = useState(20);
   const [scrollDiv, setScrollDiv] = useState();
   const data = filesData.slice(0, page);
   const [isSelected, setIsSelected] = useState([]);
@@ -52,7 +52,8 @@ export default function Page() {
     const totalHeight = scrollDiv.scrollTop + scrollDiv.clientHeight;
 
     if (totalHeight + 1 >= scrollHeight) {
-      setPage((prev) => prev + 5);
+      setSubPage((prev) => prev + 10);
+      setPage((prev) => prev + 2);
     }
   });
 
@@ -201,6 +202,7 @@ export default function Page() {
                 viewImage={viewImage}
                 handleSelectedFiles={handleSelectedFiles}
                 isSelected={isSelected}
+                subPage={subPage}
               />
             </div>
           ) : (
@@ -222,7 +224,7 @@ export default function Page() {
   );
 }
 
-function ViewLoadImages({ data, viewImage, handleSelectedFiles }) {
+function ViewLoadImages({ data, viewImage, handleSelectedFiles, subPage }) {
   function formatedate(dateString) {
     const date = new Date(dateString);
     const convertToString = String(date).slice(0, 15);
@@ -270,7 +272,7 @@ function ViewLoadImages({ data, viewImage, handleSelectedFiles }) {
                     : 'grid-cols-1'
                 }`}
               >
-                {group.fileDatas.map((items, index) => (
+                {group.fileDatas.slice(0, subPage).map((items, index) => (
                   <div key={index} className="bg-slate-300">
                     <ViewImage
                       index={index}
@@ -517,7 +519,7 @@ function ImageFullScreen({
                       alt={'Image'}
                       fill
                       placeholder="blur"
-                      blurDataURL={Base64Url}
+                      blurDataURL={imageDetails?.imageBase64}
                       className={`object-contain transition-opacity duration-500 ${
                         imageChanged ? 'opacity-0' : 'opacity-100'
                       }`}

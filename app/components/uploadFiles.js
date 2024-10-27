@@ -1,4 +1,4 @@
-import { apiLink } from '@/API/API CALLS';
+import { apiLink, GetLogedUserData } from '@/API/API CALLS';
 import U_Button from '@/Components/Button';
 import U_input from '@/Components/Input';
 import { useEffect, useState } from 'react';
@@ -12,9 +12,17 @@ export default function UploadFiles({ setUploadBox, Type }) {
   const [progressTrue, setProgressTrue] = useState(false);
   const userCurrentSize = TotalSize();
   const [message, setMessage] = useState('');
+  const [storage, setStorage] = useState('');
 
   useEffect(() => {
     setModelOpen(true);
+
+    async function getStorage() {
+      const storageData = await GetLogedUserData();
+      setStorage(storageData.message.getUser?.storage);
+    }
+
+    getStorage();
   }, []);
 
   function ClosePopUp() {
@@ -26,7 +34,14 @@ export default function UploadFiles({ setUploadBox, Type }) {
   }
 
   async function UploadImagesandVideos() {
-    if (Number(userCurrentSize.split('G')[0]) >= 50) {
+    if (
+      Number(userCurrentSize.split('G')[0]) >= Number(storage.split('G')[0])
+    ) {
+      console.log(storage);
+      console.log(
+        Number(userCurrentSize.split('G')[0]),
+        Number(storage.split('G')[0])
+      );
       setMessage('Storage is Full. Contact the admin');
       return console.log('Strorage Full');
     }
@@ -40,9 +55,8 @@ export default function UploadFiles({ setUploadBox, Type }) {
       formData.append('files', uploadFiles[index]);
     }
 
-
     const xhr = new XMLHttpRequest();
-    xhr.timeout = (1000 * 60) * 5 //5 minute initial timeout timer.
+    xhr.timeout = 1000 * 60 * 5; //5 minute initial timeout timer.
 
     if (Type === 'Photos') {
       xhr.open('POST', `${apiLink}/images/upload`, true);
@@ -77,9 +91,18 @@ export default function UploadFiles({ setUploadBox, Type }) {
     xhr.onerror = function () {
       setProgressTrue(false);
 
-      console.log('Upload error occurred.', xhr.status, xhr.statusText, xhr.responseText)
-      throw new Error('Upload error occurred.', xhr.status, xhr.statusText, xhr.responseText);
-
+      console.log(
+        'Upload error occurred.',
+        xhr.status,
+        xhr.statusText,
+        xhr.responseText
+      );
+      throw new Error(
+        'Upload error occurred.',
+        xhr.status,
+        xhr.statusText,
+        xhr.responseText
+      );
     };
 
     xhr.send(formData);

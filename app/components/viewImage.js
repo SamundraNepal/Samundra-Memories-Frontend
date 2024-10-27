@@ -39,7 +39,7 @@ export default function ViewImage({
           src={items?.imageURL}
           alt={items.imageName}
           placeholder="blur"
-          blurDataURL={Base64Url}
+          blurDataURL={items?.imageBase64}
           width={400}
           height={400}
           quality={10}

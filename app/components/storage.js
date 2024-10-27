@@ -1,4 +1,5 @@
 import {
+  GetLogedUserData,
   loadImages,
   loadTrashImages,
   loadTrashVideos,
@@ -46,6 +47,16 @@ export const TotalSize = () => {
 
 export default function StorageTotal() {
   const size = TotalSize();
+  const [tSize, setTotalSize] = useState('');
+
+  useEffect(() => {
+    async function getStorageData() {
+      const storage = await GetLogedUserData();
+      setTotalSize(storage.message.getUser?.storage);
+    }
+
+    getStorageData();
+  }, []);
 
   return (
     <div className="flex flex-col justify-center items-center border-4 rounded-[10px] border-amber-500 bg-slate-50">
@@ -53,7 +64,9 @@ export default function StorageTotal() {
         <TiCloudStorageOutline className="text-5xl" />
       </div>
       <span className="text-black font-sm ">Storage:</span>
-      <span className="text-black font-sm ">{size}/50GB</span>
+      <span className="text-black font-sm ">
+        {size}/{tSize}
+      </span>
     </div>
   );
 }
