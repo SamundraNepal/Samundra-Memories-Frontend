@@ -8,7 +8,6 @@ import Sppiner from '@/Components/Spiner';
 import FullScreen from '../components/fullScreenMode';
 import TrashFilesVideo from '../components/trashFileVideo';
 import DeleteRestoreFiles from '../components/deleteRestore';
-import { MdOutlineSettingsBackupRestore } from 'react-icons/md';
 
 export default function Page() {
   const [loading, setLoading] = useState(true);

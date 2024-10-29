@@ -6,7 +6,6 @@ export default function U_input({
   Type,
   Size,
   accept = '',
-  multiple,
 }) {
   return (
     <input
@@ -17,7 +16,7 @@ export default function U_input({
       value={Value}
       onChange={OnChange}
       accept={accept}
-      multiple={multiple}
+      multiple
       className={`p-2 rounded text-black bg-slate-200 ${Size} border-none outline-none focus:ring focus:ring-green-50 max-sm:w-full`}
     />
   );

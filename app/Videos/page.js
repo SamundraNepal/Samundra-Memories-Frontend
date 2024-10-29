@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import UploadFiles from '../components/uploadFiles';
 import { loadVideos } from '@/API/API CALLS';
 import { CiCircleInfo, CiCircleChevLeft } from 'react-icons/ci';
@@ -26,24 +26,59 @@ export default function Page() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentIndexOne, setCurrentIndexOne] = useState(0);
   const [page, setPage] = useState(10);
+  const [subPage, setSubPage] = useState(10);
+
   const [onLoadCompleteVideo, setOnLoadCompleteVideo] = useState(false);
   const [isSelected, setIsSelected] = useState([]);
   const [isDeleteAll, setIsDeleteAll] = useState(false);
   const [scrollDiv, setScrollDiv] = useState();
-  const data = filesData.slice(0, page);
+
+  const [changePosition , setChangePosition] = useState(false);
+  const [scrollPosition, setScrollPosition] = useState(0);
+
+
+  const data = useMemo(() => {
+    return filesData.slice(0, page);
+  }, [filesData, page , subPage]);
+
 
   useEffect(() => {
     GetloadVideos();
+   
+  }, []);
+
+
+  
+  // this needs to mount everytime to catch the div
+  useEffect(() =>{
     setTimeout(() => {
       setScrollDiv(document.getElementById('childDiv'));
+
+      if(changePosition)
+        {
+          if(scrollDiv)
+          {         
+          scrollDiv.scrollTop = scrollPosition;
+          setChangePosition(false);
+          }
+        }
     }, 500);
-  }, []);
+
+
+    return clearTimeout();
+   })
+
+   console.log(changePosition);
+
 
   scrollDiv?.addEventListener('scroll', (event) => {
     event.preventDefault();
     const scrollHeight = scrollDiv.scrollHeight;
     const totalHeight = scrollDiv.scrollTop + scrollDiv.clientHeight;
+    setScrollPosition(scrollDiv.scrollTop);
+
     if (totalHeight + 1 >= scrollHeight) {
+      setSubPage((prev) => prev + 10);
       setPage((prev) => prev + 5);
     }
   });
@@ -193,6 +228,7 @@ export default function Page() {
                 onLoadCompleteVideo={onLoadCompleteVideo}
                 viewImage={viewImage}
                 handleSelectedFiles={handleSelectedFiles}
+                subPage={subPage}
               />
             </div>
           ) : (
@@ -204,6 +240,7 @@ export default function Page() {
               setCurrentIndex={setCurrentIndex}
               resizeFiles={resizeFiles}
               setCurrentIndexOne={setCurrentIndexOne}
+              setChangePosition={setChangePosition}
             />
           )}
         </div>
@@ -222,6 +259,7 @@ function ImageFullScreen({
   setCurrentIndex,
   setCurrentIndexOne,
   resizeFiles,
+  setChangePosition
 }) {
   const [loading, setLoading] = useState(true);
   const [imageDetails, setImageDetails] = useState({});
@@ -313,10 +351,13 @@ function ImageFullScreen({
     setDetails(false);
     setOpenAnim(false);
     setBarAnimation(false);
-
+    setChangePosition(true);
     setTimeout(() => {
       setIsFullScreen(false);
     }, 500);
+
+   clearTimeout();
+
   }
 
   return (
@@ -432,6 +473,7 @@ function ImageFullScreen({
                       controls
                       autoPlay
                       fill
+                      preload='metadata'
                       className={`object-contain transition-opacity duration-500 ${
                         imageChanged ? 'opacity-0' : 'opacity-100'
                       }`}
@@ -466,6 +508,7 @@ function ViewLoadVidoes({
   onLoadCompleteVideo,
   viewImage,
   handleSelectedFiles,
+  subPage
 }) {
   function formatedate(dateString) {
     const date = new Date(dateString);
@@ -478,7 +521,7 @@ function ViewLoadVidoes({
       <div className="h-full w-full transition-all duration-300">
         {data?.length > 0 ? (
           <div
-            className="h-[650px] w-full overflow-y-auto grid grid-cols-3 gap-1 max-sm:grid-cols-3 max-sm:h-[700px]"
+            className="h-[900px] w-full overflow-y-auto grid grid-cols-3 gap-1 max-sm:grid-cols-3 max-sm:h-[700px]"
             id="childDiv"
           >
             {/* Fixed height and vertical scroll */}
@@ -513,7 +556,7 @@ function ViewLoadVidoes({
                         : 'grid-cols-1'
                     }`}
                   >
-                    {group.fileDatas.map((items, index) => (
+                    {group.fileDatas.slice(0,subPage).map((items, index) => (
                       <div key={index}>
                         <ViewVideo
                           index={index}

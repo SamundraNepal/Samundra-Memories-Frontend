@@ -22,19 +22,19 @@ export default function Navigation({ setSideBar }) {
 
           <li className="hover:bg-amber-400 w-24 transition-all flex items-center gap-1 text-xl border-b-4 border-gray-200 w-full py-2">
             <PiImagesSquareThin />
-            <Link className="flex" href="/Image">
+            <Link className="flex" href="/Image" prefetch={false}>
               Photos
             </Link>
           </li>
 
           <li className="hover:bg-amber-400 w-24 transition-all flex items-center gap-1 text-xl border-b-4 border-gray-200 w-full py-2">
             <LiaVideoSolid />
-            <Link href="/Videos">Videos</Link>
+            <Link href="/Videos" prefetch ={false}>Videos</Link>
           </li>
 
           <li className="hover:bg-amber-400 w-24 transition-all flex items-center gap-1 text-xl border-b-4 border-gray-200 w-full py-2">
             <FaRegTrashAlt />
-            <Link href="/Trash">Trash</Link>
+            <Link href="/Trash" prefetch ={false}>Trash</Link>
           </li>
         </ul>
 

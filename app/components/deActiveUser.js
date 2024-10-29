@@ -1,3 +1,4 @@
+import { apiLink } from '@/API/API CALLS';
 import U_Button from '@/Components/Button';
 import Sppiner from '@/Components/Spiner';
 import { useEffect, useState } from 'react';
@@ -37,7 +38,7 @@ export default function DeActiveUser({
     try {
       setLoading(true);
       const response = await fetch(
-        'http://127.1.0.1:8000/v1/memories/user/deleteUser',
+        `${apiLink}/user/deleteUser`,
         {
           method: 'PATCH',
           headers: {

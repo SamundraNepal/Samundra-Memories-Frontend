@@ -1,3 +1,4 @@
+import { apiLink } from '@/API/API CALLS';
 import U_Button from '@/Components/Button';
 import U_input from '@/Components/Input';
 import Spiner from '@/Components/Spiner';
@@ -35,7 +36,7 @@ export default function ChangePassword({ setChnagePasswordPopUp }) {
     try {
       setLoading(true);
       const Response = await fetch(
-        'http://127.1.0.1:8000/v1/memories/user/updatePassword',
+        `${apiLink}/user/updatePassword`,
         {
           method: 'POST',
           headers: {

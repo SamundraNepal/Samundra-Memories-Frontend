@@ -1,8 +1,8 @@
 'use client';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import UploadFiles from '../components/uploadFiles';
-import { loadImages } from '@/API/API CALLS';
+import { base64Char, loadImages } from '@/API/API CALLS';
 import { CiCircleInfo, CiCircleChevLeft } from 'react-icons/ci';
 import { MdOutlineDelete } from 'react-icons/md';
 import DeleteFiles from '../components/deleteFile';
@@ -34,26 +34,58 @@ export default function Page() {
   const [page, setPage] = useState(10);
   const [subPage, setSubPage] = useState(20);
   const [scrollDiv, setScrollDiv] = useState();
-  const data = filesData.slice(0, page);
+
+  const [scrollPosition, setScrollPosition] = useState(0);
+
+  const data = useMemo(() => {
+    return filesData.slice(0, page);
+  }, [filesData, page , subPage]);
+
+
   const [isSelected, setIsSelected] = useState([]);
   const [isDeleteAll, setIsDeleteAll] = useState(false);
+  const [changePosition , setChangePosition] = useState(false);
 
   useEffect(() => {
     GetloadVideos();
+ 
+  }, []);
+
+
+  // this needs to mount everytime to catch the div
+   useEffect(() =>{
     setTimeout(() => {
       setScrollDiv(document.getElementById('childDiv'));
+
+      if(changePosition)
+        {
+          if(scrollDiv)
+          {         
+          scrollDiv.scrollTop = scrollPosition;
+          setChangePosition(false);
+          }
+        }
     }, 500);
-  }, []);
+
+    return clearTimeout();
+
+   })
+
 
   scrollDiv?.addEventListener('scroll', (event) => {
     console.log('here');
     event.preventDefault();
+    
+   
     const scrollHeight = scrollDiv.scrollHeight;
     const totalHeight = scrollDiv.scrollTop + scrollDiv.clientHeight;
+    setScrollPosition(scrollDiv.scrollTop);
+
 
     if (totalHeight + 1 >= scrollHeight) {
       setSubPage((prev) => prev + 10);
       setPage((prev) => prev + 2);
+
     }
   });
 
@@ -214,6 +246,7 @@ export default function Page() {
               setCurrentIndex={setCurrentIndex}
               resizeFiles={resizeFiles}
               setCurrentIndexOne={setCurrentIndexOne}
+              setChangePosition ={setChangePosition}
             />
           )}
         </div>
@@ -235,7 +268,7 @@ function ViewLoadImages({ data, viewImage, handleSelectedFiles, subPage }) {
     <div className="h-full w-full transition-all duration-300">
       {data?.length > 0 ? (
         <div
-          className="h-[650px] w-full overflow-y-auto grid grid-cols-3 gap-1 max-sm:grid-cols-3 max-sm:h-[700px]"
+          className="h-[900px] w-full overflow-y-auto grid grid-cols-3 gap-1 max-sm:grid-cols-3 max-sm:h-[700px]"
           id="childDiv"
         >
           {/* Fixed height and vertical scroll */}
@@ -304,6 +337,7 @@ function ImageFullScreen({
   filesData,
   setCurrentIndex,
   resizeFiles,
+  setChangePosition
 }) {
   const [loading, setLoading] = useState(true);
   const [imageDetails, setImageDetails] = useState({});
@@ -396,10 +430,13 @@ function ImageFullScreen({
     setDetails(false);
     setOpenAnim(false);
     setBarAnimation(false);
-
+    setChangePosition(true);
     setTimeout(() => {
       setIsFullScreen(false);
     }, 500);
+
+     clearTimeout();
+
   }
 
   return (
@@ -519,7 +556,7 @@ function ImageFullScreen({
                       alt={'Image'}
                       fill
                       placeholder="blur"
-                      blurDataURL={imageDetails?.imageBase64}
+                      blurDataURL={imageDetails.imageBase64 === null ? base64Char : imageDetails.imageBase64}
                       className={`object-contain transition-opacity duration-500 ${
                         imageChanged ? 'opacity-0' : 'opacity-100'
                       }`}

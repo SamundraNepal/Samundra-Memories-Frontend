@@ -40,15 +40,17 @@ export default function ViewVideo({
         onClick={(e) => viewImage(items, indexOne, index)}
         className="bg-slate-300"
       >
-        <video
+        <video 
           className={`border-4 cursor-pointer transition-all duration-300 w-full h-full ${
             isTick ? 'p-2' : 'p-0'
           } hover:border-green-500`} // Using a more descriptive state name
-        >
+           preload='auto'>
           <source
             src={items?.videoURL}
             type="video/mp4"
             alt={items?.videoName}
+
+            
           />
         </video>
       </div>

@@ -271,8 +271,8 @@ function UploadImage({
                 </button>
               </div>
             ) : (
-              <div className="flex flex-col justify-center gap-10 items-center w-full">
-                <h3 className="text-white uppercase">{message} hello test</h3>
+              <div className="flex flex-row justify-center gap-10 items-center w-full">
+                <h3 className="text-white uppercase">{message}</h3>
                 <U_Button
                   b_name={'Log In'}
                   b_function={(e) => setSignUp(false)}

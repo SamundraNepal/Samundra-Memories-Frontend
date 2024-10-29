@@ -52,7 +52,7 @@ export default function StorageTotal() {
   useEffect(() => {
     async function getStorageData() {
       const storage = await GetLogedUserData();
-      setTotalSize(storage.message.getUser?.storage);
+      setTotalSize(storage.message.getUser.storage);
     }
 
     getStorageData();

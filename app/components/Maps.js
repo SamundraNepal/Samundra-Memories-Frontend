@@ -24,7 +24,7 @@ export default function MapLocation({ latRef, lanRef, latCod, lanCod }) {
     return null;
   }
 
-  if (latRef != 'Missing') {
+  if (latRef != 'Missing' && latRef !='Unknown') {
     const lanDegree = lanCod[0][0];
     const lanMin = lanCod[1][0] / 60;
     const lanSeconds = lanCod[2][0] / lanCod[2][1] / 3600;

@@ -34,29 +34,44 @@ export default function UploadFiles({ setUploadBox, Type }) {
   }
 
   async function UploadImagesandVideos() {
+
+    let totalMb = 0;
+    for (let index = 0; index < uploadFiles.length; index++) {
+     const sizeCheck = uploadFiles[index].size;
+     const convertToMb = ((sizeCheck/1024)/1024).toFixed(2);
+     totalMb += (convertToMb / 1024);
+    }
+   
+       if (
+         Number(totalMb) >= Number(storage?.split('G')[0])
+       ) {
+      
+         setMessage('This file size exceeds the total storage');
+         return console.log('Exceeds size');
+       }
+   
     if (
-      Number(userCurrentSize.split('G')[0]) >= Number(storage.split('G')[0])
+      Number(userCurrentSize?.split('G')[0]) >= Number(storage?.split('G')[0])
     ) {
-      console.log(storage);
-      console.log(
-        Number(userCurrentSize.split('G')[0]),
-        Number(storage.split('G')[0])
-      );
+      
       setMessage('Storage is Full. Contact the admin');
       return console.log('Strorage Full');
     }
     setProgressTrue(true);
 
+
+
     if (uploadFiles.length < 1) {
       return console.log('this is empty');
     }
     const formData = new FormData();
+
     for (let index = 0; index < uploadFiles.length; index++) {
       formData.append('files', uploadFiles[index]);
     }
 
     const xhr = new XMLHttpRequest();
-    xhr.timeout = 1000 * 60 * 5; //5 minute initial timeout timer.
+    xhr.timeout = 1000 * 60 * 600; //60 minute initial timeout timer.
 
     if (Type === 'Photos') {
       xhr.open('POST', `${apiLink}/images/upload`, true);
@@ -81,6 +96,7 @@ export default function UploadFiles({ setUploadBox, Type }) {
       if (xhr.status === 200) {
         console.log('Files uploaded successfully');
         setProgressTrue(false);
+        ClosePopUp();
       } else {
         console.error('Upload failed');
         setProgressTrue(false);
@@ -120,14 +136,13 @@ export default function UploadFiles({ setUploadBox, Type }) {
           <div className="flex flex-col gap-5 justify-center items-center">
             <U_input
               Type="file"
-              accept={Type === 'Photos' ? 'image/*' : 'video/*'}
-              multiple
+              accept={Type === 'Photos' ? ".jpg, .jpeg, .png" : 'video/*'}
               OnChange={(e) => setUploadFiles(e.target.files)}
             />
             {uploadFiles.length > 0 && (
               <U_Button b_name={'Upload'} b_function={UploadImagesandVideos} />
             )}{' '}
-            <U_Button b_name={'Cancle'} b_function={ClosePopUp} />
+            <U_Button b_name={'Cancel'} b_function={ClosePopUp} />
             <span className="font-bold text-red-600 uppercase">{message}</span>
           </div>
         ) : (

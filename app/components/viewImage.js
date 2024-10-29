@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Tick from './tick';
 import { useEffect, useState } from 'react';
-import { Base64Url } from '@/API/API CALLS';
+import { base64Char, Base64Url } from '@/API/API CALLS';
 
 export default function ViewImage({
   index,
@@ -35,11 +35,13 @@ export default function ViewImage({
     >
       <Tick setIsTicked={setIsTicked} />
       <div key={index} onClick={(e) => viewImage(items, indexOne, index)}>
+
+   
         <Image
           src={items?.imageURL}
           alt={items.imageName}
           placeholder="blur"
-          blurDataURL={items?.imageBase64}
+          blurDataURL={items.imageBase64 === null ? base64Char : items.imageBase64}
           width={400}
           height={400}
           quality={10}

@@ -1,3 +1,4 @@
+import { apiLink } from '@/API/API CALLS';
 import U_Button from '@/Components/Button';
 import U_input from '@/Components/Input';
 import Spiner from '@/Components/Spiner';
@@ -34,7 +35,7 @@ export default function ChangeProfilePicture({ setChangeProfilePic }) {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://127.1.0.1:8000/v1/memories/uploadImage/${signUpToken}`,
+        `${apiLink}/uploadImage/${signUpToken}`,
         {
           method: 'POST',
           headers: {

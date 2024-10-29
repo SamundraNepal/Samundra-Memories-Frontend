@@ -23,15 +23,16 @@ export default function VideoMapLocation({ imageDetails }) {
 
   useEffect(() => {
     function handleGpsLocation() {
-      if (imageDetails.videoTakenPlace != 'Missing') {
+      if (imageDetails.gPSLatitudeAndLongitude != '00000S 00000N') {
         const latSplit = imageDetails.gPSLatitudeAndLongitude.split(',')[0];
         const longSplit = imageDetails.gPSLatitudeAndLongitude.split(',')[1];
 
+        console.log(longSplit);
         setLatitude(latSplit.match(/\d+(\.\d+)?/g));
-        setLongitude(longSplit.match(/\d+(\.\d+)?/g));
+        setLongitude(longSplit?.match(/\d+(\.\d+)?/g));
 
         setLatDirection(latSplit.match(/[a-zA-Z]+/g)[1]);
-        setLongDirection(longSplit.match(/[a-zA-Z]+/g)[1]);
+        setLongDirection(longSplit?.match(/[a-zA-Z]+/g)[1]);
       } else {
         setLan(0);
         setLat(0);
