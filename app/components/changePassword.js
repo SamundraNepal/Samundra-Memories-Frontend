@@ -35,17 +35,14 @@ export default function ChangePassword({ setChnagePasswordPopUp }) {
     e.preventDefault();
     try {
       setLoading(true);
-      const Response = await fetch(
-        `${apiLink}/user/updatePassword`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            authorization: `Bearer ${sessionStorage.getItem('cookies')}`,
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+      const Response = await fetch(`${apiLink}/user/updatePassword`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: `Bearer ${sessionStorage.getItem('cookies')}`,
+        },
+        body: JSON.stringify(formData),
+      });
 
       if (!Response.ok) {
         const errResponse = await Response.json();

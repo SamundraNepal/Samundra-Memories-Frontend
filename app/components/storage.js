@@ -51,8 +51,12 @@ export default function StorageTotal() {
 
   useEffect(() => {
     async function getStorageData() {
-      const storage = await GetLogedUserData();
-      setTotalSize(storage.message.getUser.storage);
+      try {
+        const storage = await GetLogedUserData();
+        setTotalSize(storage.message.getUser.storage);
+      } catch (err) {
+        console.log('failed to get the storage' + err.message);
+      }
     }
 
     getStorageData();

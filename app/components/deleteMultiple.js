@@ -51,8 +51,6 @@ export default function DeleteMultipleFiles({
 
         const method = choice === 'P_Delete' ? 'DELETE' : 'PATCH';
 
-        console.log(method);
-
         return fetch(endPoint, {
           method,
           headers: {

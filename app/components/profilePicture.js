@@ -34,16 +34,13 @@ export default function ChangeProfilePicture({ setChangeProfilePic }) {
 
     try {
       setLoading(true);
-      const response = await fetch(
-        `${apiLink}/uploadImage/${signUpToken}`,
-        {
-          method: 'POST',
-          headers: {
-            authorization: `Bearer ${sessionStorage.getItem('cookies')}`,
-          },
-          body: fdata,
-        }
-      );
+      const response = await fetch(`${apiLink}/uploadImage/${signUpToken}`, {
+        method: 'POST',
+        headers: {
+          authorization: `Bearer ${sessionStorage.getItem('cookies')}`,
+        },
+        body: fdata,
+      });
 
       if (!response.ok) {
         const errResponse = await response.json();
@@ -79,9 +76,10 @@ export default function ChangeProfilePicture({ setChangeProfilePic }) {
 
   return (
     <div
-      className={`absolute flex justify-center items-center h-3/5 p-10 w-3/5 ${
-        modelOpen ? 'scale-100' : 'scale-0'
-      } transition duration-500 ease-in-out max-sm:w-[450px] h-[450px]`}
+      className={`absolute flex justify-center items-center h-3/5 p-10 w-3/5 mt-40
+        ${
+          modelOpen ? 'scale-100' : 'scale-0'
+        } transition duration-500 ease-in-out max-sm:w-[450px] max-sm:h-[450px] max-sm:mt-40`}
     >
       <div className=" w-full h-full rounded-[50px] bg-gradient-to-t from-amber-50 via-amber-500 to-amber-50 ">
         {!loading ? (

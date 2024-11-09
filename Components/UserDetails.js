@@ -62,6 +62,7 @@ export default function UserDetails({
                 alt="user image"
               />
             </button>
+
             <h3>{firstName}</h3>
           </div>
 
@@ -74,15 +75,17 @@ export default function UserDetails({
               >
                 <div className="flex flex-col justify-center items-center">
                   <h3 className="mt-1">{email}</h3>
-                  <div>
-                    <Image
-                      className="rounded-full object-cover mt-8 border-4 border-amber-500"
-                      src={newImageLink} // Replace backslashes with forward slashes
-                      width={45}
-                      height={45}
-                      alt="user image"
-                    />
-                  </div>
+                  {newImageLink && (
+                    <div>
+                      <Image
+                        className="rounded-full object-cover mt-8 border-4 border-amber-500"
+                        src={newImageLink} // Replace backslashes with forward slashes
+                        width={45}
+                        height={45}
+                        alt="user image"
+                      />
+                    </div>
+                  )}
 
                   <h3>{firstName + ' ' + lastName}</h3>
                 </div>

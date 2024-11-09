@@ -2,6 +2,7 @@
 import { loadTrashImages, loadTrashVideos } from '@/API/API CALLS';
 import { useEffect, useMemo, useState } from 'react';
 import { MdOutlineDelete } from 'react-icons/md';
+import { MdOutlineSettingsBackupRestore } from 'react-icons/md';
 
 import Sppiner from '@/Components/Spiner';
 
@@ -71,14 +72,12 @@ export default function Page() {
         return [...prevData, selectedFile];
       } else {
         // Remove the duplicate file if it already exists in the state
-        console.log('duplicate removed');
         return prevData.filter((item) => item !== selectedFile);
       }
     });
   }
 
   function changeType(type) {
-    console.log(type);
     if (type === 'Restore') {
       setType('Restore');
     } else {
@@ -125,7 +124,7 @@ export default function Page() {
               <div className="p-4 border-b-2 border-amber-800 bg-gradient-to-r from-amber-50 via-amber-500 to-amber-50">
                 <div className="flex justify-between items-center">
                   {isSelected.length > 0 && (
-                    <div className="flex flex-row gap-4 text-slate-900 max-sm:flex-col">
+                    <div className="flex flex-row gap-4 text-slate-900 max-sm:flex-row">
                       <span className="font-bold">
                         Selected : {isSelected.length}
                       </span>
@@ -134,6 +133,13 @@ export default function Page() {
                         onClick={() => setIsDeleteAll(true)}
                       >
                         <MdOutlineDelete />
+                      </div>
+
+                      <div
+                        className="text-4xl cursor-pointer hover:text-slate-100"
+                        onClick={() => changeType('Restore')}
+                      >
+                        <MdOutlineSettingsBackupRestore />
                       </div>
                     </div>
                   )}

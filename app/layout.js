@@ -14,7 +14,7 @@ import ChangeProfilePicture from './components/profilePicture';
 import SideBarHandler from './components/sidebarHandler';
 
 export default function RootLayout({ children }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [signUp, setSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -91,7 +91,7 @@ export default function RootLayout({ children }) {
                 </main>
               ) : (
                 <div>
-                  <Sppiner Size="p-20" />
+                  <Sppiner Size="p-10" />
                 </div>
               )}
               {changePasswordPopUp && (

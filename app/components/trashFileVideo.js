@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Tick from './tick';
 import { useEffect, useState } from 'react';
+import { base64Char } from '@/API/API CALLS';
 
 export default function TrashFilesVideo({
   index,
@@ -38,7 +39,7 @@ export default function TrashFilesVideo({
       >
         {/* Conditionally render video or image */}
         {item.videoURL ? (
-          <video>
+          <video preload="auto">
             {/* Add controls for the video */}
             <source src={item.videoURL} type="video/mp4" />
             Your browser does not support the video tag.
@@ -47,6 +48,10 @@ export default function TrashFilesVideo({
           <Image
             src={item?.imageURL}
             alt={item.imageName || 'Image'}
+            placeholder="blur"
+            blurDataURL={
+              item?.imageBase64 === null ? base64Char : item?.imageBase64
+            }
             width={200}
             height={200}
             quality={20}

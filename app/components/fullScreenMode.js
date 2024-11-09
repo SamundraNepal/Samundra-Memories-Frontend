@@ -7,6 +7,7 @@ import { MdOutlineDelete } from 'react-icons/md';
 import { MdOutlineSettingsBackupRestore } from 'react-icons/md';
 import { FaChevronRight } from 'react-icons/fa6';
 import dynamic from 'next/dynamic';
+import { base64Char } from '@/API/API CALLS';
 // Dynamically import the VideoMapLocation component without SSR
 const VideoMapLocation = dynamic(() => import('./videoMap'), {
   ssr: false,
@@ -234,6 +235,7 @@ export default function FullScreen({
                 <video
                   src={imageDetails?.videoURL || ''}
                   alt={'video playing'}
+                  preload="auto"
                   controls
                   autoPlay
                   fill
@@ -262,12 +264,17 @@ export default function FullScreen({
               </div>
             )}
 
-            {!imageDetails.viodeoName && (
+            {!imageDetails.viodeoName && imageDetails?.imageURL && (
               <Image
                 src={imageDetails?.imageURL}
+                placeholder={'blur'}
+                blurDataURL={
+                  imageDetails?.imageBase64 === null
+                    ? base64Char
+                    : imageDetails?.imageBase64
+                }
                 alt={'Image'}
                 fill
-                loading="lazy"
                 className={`object-contain transition-opacity duration-500 ${
                   imageChanged ? 'opacity-0' : 'opacity-100'
                 }`}

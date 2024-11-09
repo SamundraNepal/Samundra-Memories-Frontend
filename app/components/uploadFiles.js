@@ -5,7 +5,12 @@ import { useEffect, useState } from 'react';
 import UploadFilesNotifications from './uploadingFiles';
 import { TotalSize } from './storage';
 
-export default function UploadFiles({ setUploadBox, Type }) {
+export default function UploadFiles({
+  setUploadBox,
+  Type,
+  albumName,
+  viewAlbums,
+}) {
   const [modelOpen, setModelOpen] = useState(false);
   const [uploadFiles, setUploadFiles] = useState([]);
   const [progress, setProgress] = useState(0); // Track upload progress
@@ -16,7 +21,6 @@ export default function UploadFiles({ setUploadBox, Type }) {
 
   useEffect(() => {
     setModelOpen(true);
-
     async function getStorage() {
       const storageData = await GetLogedUserData();
       setStorage(storageData.message.getUser?.storage);
@@ -34,32 +38,25 @@ export default function UploadFiles({ setUploadBox, Type }) {
   }
 
   async function UploadImagesandVideos() {
-
     let totalMb = 0;
     for (let index = 0; index < uploadFiles.length; index++) {
-     const sizeCheck = uploadFiles[index].size;
-     const convertToMb = ((sizeCheck/1024)/1024).toFixed(2);
-     totalMb += (convertToMb / 1024);
+      const sizeCheck = uploadFiles[index].size;
+      const convertToMb = (sizeCheck / 1024 / 1024).toFixed(2);
+      totalMb += convertToMb / 1024;
     }
-   
-       if (
-         Number(totalMb) >= Number(storage?.split('G')[0])
-       ) {
-      
-         setMessage('This file size exceeds the total storage');
-         return console.log('Exceeds size');
-       }
-   
+
+    if (Number(totalMb) >= Number(storage?.split('G')[0])) {
+      setMessage('This file size exceeds the total storage');
+      return console.log('Exceeds size');
+    }
+
     if (
       Number(userCurrentSize?.split('G')[0]) >= Number(storage?.split('G')[0])
     ) {
-      
       setMessage('Storage is Full. Contact the admin');
       return console.log('Strorage Full');
     }
     setProgressTrue(true);
-
-
 
     if (uploadFiles.length < 1) {
       return console.log('this is empty');
@@ -68,6 +65,10 @@ export default function UploadFiles({ setUploadBox, Type }) {
 
     for (let index = 0; index < uploadFiles.length; index++) {
       formData.append('files', uploadFiles[index]);
+    }
+
+    if (viewAlbums) {
+      formData.append('albumName', albumName);
     }
 
     const xhr = new XMLHttpRequest();
@@ -106,7 +107,7 @@ export default function UploadFiles({ setUploadBox, Type }) {
 
     xhr.onerror = function () {
       setProgressTrue(false);
-
+      ClosePopUp();
       console.log(
         'Upload error occurred.',
         xhr.status,
@@ -126,17 +127,19 @@ export default function UploadFiles({ setUploadBox, Type }) {
 
   return (
     <div
-      className={`relative flex justify-center items-center h-4/5 w-full ${
+      className={`relative flex justify-center items-center h-4/5 w-full mt-20 ${
         modelOpen ? 'scale-100' : 'scale-0'
-      } transition duration-500 ease-in-out max-sm:h-full`}
+      } transition duration-500 ease-in-out max-sm:h-2/5  max-sm:mt-40`}
     >
       <div className=" w-full h-full rounded-[50px] bg-amber-300 flex flex-col items-center justify-center border-8 border-yellow-200">
-        <span className="font-bold">Upload {Type} </span>
+        <span className="font-bold">
+          {progress > 0 ? 'Uploading ' : 'Upload'} {Type}
+        </span>
         {!progressTrue ? (
           <div className="flex flex-col gap-5 justify-center items-center">
             <U_input
               Type="file"
-              accept={Type === 'Photos' ? ".jpg, .jpeg, .png" : 'video/*'}
+              accept={Type === 'Photos' ? '.jpg, .jpeg, .png' : 'video/*'}
               OnChange={(e) => setUploadFiles(e.target.files)}
             />
             {uploadFiles.length > 0 && (
