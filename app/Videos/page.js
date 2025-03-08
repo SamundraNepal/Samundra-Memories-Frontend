@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import UploadFiles from '../components/uploadFiles';
-import { getAlbumVideos, GetLogedUserData, loadVideos } from '@/API/API CALLS';
+import { getAlbumVideos, GetLogedUserData, getVideosSearchFiles, loadVideos } from '@/API/API CALLS';
 import { CiCircleChevLeft } from 'react-icons/ci';
 import DeleteFiles from '../components/deleteFile';
 import { FaChevronRight } from 'react-icons/fa6';
@@ -20,6 +20,7 @@ import AddPhotosToAlbumBox from '../components/addPhotosToAlbum';
 import RemovePhotosFromAlbumBox from '../components/removePhotosFromAlbum';
 import SelectedFiles from '../components/selectedFiles';
 import EditAlbumBox from '../components/editAlbumbox';
+import SearchBar from '@/Components/SearchBar';
 
 // Dynamically import the VideoMapLocation component without SSR
 const VideoMapLocation = dynamic(() => import('../components/videoMap'), {
@@ -58,13 +59,15 @@ export default function Page() {
   const [removeVideosFromAlbum, setRemoveVideosFromAlbum] = useState(false);
   const [datas, setData] = useState([]); // this is used in  load album images this receives fetch data
 
+  const[searchDate , setSearchDate ] = useState('');
+
   const data = useMemo(() => {
     return filesData.slice(0, page);
   }, [filesData, page, subPage]);
 
   useEffect(() => {
-    setPage(1);
-    setSubPage(20);
+    setPage(5);
+    setSubPage(10);
     GetloadVideos();
   }, []);
 
@@ -238,6 +241,26 @@ export default function Page() {
     setIsSelected([]);
   }
 
+
+  async function handleSearchData()
+  {
+    try{
+     const data = await getVideosSearchFiles(searchDate);
+     if(data.message.result.length > 0)
+     {
+     setFilesdata(data.message.result);
+     }
+    }catch(err)
+    {
+
+console.log(err.message)
+
+    }
+  }
+
+
+
+  
   // console.log(filesData.map((ietms) => ietms.fileDatas.length > 1));
   return (
     <>
@@ -317,6 +340,9 @@ export default function Page() {
                       </div>
                     )}
                   </div>
+
+                  <SearchBar placeholder={'Search by Year (eg 2022)'} searchDate ={searchDate} setSearchDate ={setSearchDate} handleFunction={handleSearchData}/>
+
                   {/* Button */}
 
                   <div className="ml-4 text-3xl">
@@ -634,7 +660,7 @@ function ImageFullScreen({
                           Original Date: {imageDetails.dateTimeOriginal}
                         </span>
 
-                        <span>Duration : {imageDetails.videoDuration} Sec</span>
+                        <span>Duration : {Number(imageDetails.videoDuration).toFixed(2)} Sec</span>
 
                         <span>Size :{imageDetails.videoFileSize} Mb</span>
                         {imageDetails.make != 'Missing' && (
@@ -733,12 +759,12 @@ function ImageFullScreen({
                 </div>
 
                 {!details && (
-                  <div className=" z-10 h-full w-1/5 flex">
+                  <div className="h-full w-1/5 flex items-center">
                     <button
-                      className="text-white text-6xl  hover:text-slate-500"
+                      className="text-white text-6xl hover:text-slate-500 z-10 h-1/5"
                       onClick={(e) => imageCarasouleForward()}
                     >
-                      {slider && <FaChevronRight />}
+                      {slider && <FaChevronRight className='z-10' />}
                     </button>
                   </div>
                 )}
@@ -775,7 +801,7 @@ function ViewLoadVidoes({
       <div className="h-full w-full transition-all duration-300">
         {data?.length > 0 || videoAlbums?.length > 0 ? (
           <div
-            className="h-[640px] w-full overflow-y-auto grid grid-cols-3 gap-1 max-sm:grid-cols-3 max-sm:h-[700px]"
+            className="h-[calc(100vh-18vh)] w-full overflow-y-auto grid grid-cols-3 gap-1 max-sm:grid-cols-3 max-sm:h-[calc(100vh-20vh)]"
             id="childDiv"
           >
             {/* Fixed height and vertical scroll */}
@@ -785,15 +811,16 @@ function ViewLoadVidoes({
               HandleViewAlbums={HandleViewAlbums}
             />
 
-            {data.map((group, indexOne) => (
-              <div
-                key={group._id}
-                className={`flex flex-col ${
-                  group.fileDatas.length > 5
-                    ? 'col-span-3'
-                    : 'max-sm:col-span-3'
-                }`}
-              >
+          
+{data.map((group, indexOne) => (
+            <div
+              key={group._id}
+              className={`${
+                !group._id ? 'scale-0' : 'scale-100'
+              } transition-transform duration-300 flex flex-col p-2 ${
+                group.fileDatas.length > 5 ? 'col-span-3' : 'max-sm:col-span-3'
+              }`}
+            >
                 <div>
                   <div className="flex justify-start font-bold text-slate-500">
                     <span>
@@ -803,7 +830,7 @@ function ViewLoadVidoes({
 
                   {/* First 5 images */}
                   <div
-                    className={`bg-slate-300 grid w-full ${
+                    className={` grid w-full ${
                       group.fileDatas.length >= 5
                         ? 'grid-cols-6 max-sm:grid-cols-3'
                         : group.fileDatas.length === 4
@@ -816,7 +843,7 @@ function ViewLoadVidoes({
                     }`}
                   >
                     {group.fileDatas.slice(0, subPage).map((items, index) => (
-                      <div key={index}>
+                      <div key={index} className="bg-slate-300">
                         <ViewVideo
                           index={index}
                           items={items}
@@ -866,8 +893,8 @@ function ViewAlbumVidoes({
   }
 
   useEffect(() => {
-    setSubPage(10);
-    setPage(1);
+    setPage(5);
+    setSubPage(15);
     async function loadApiData() {
       try {
         const albumData = await getAlbumVideos({ albumName });
@@ -893,7 +920,7 @@ function ViewAlbumVidoes({
       <div className="h-full w-full transition-all duration-300">
         {data?.length > 0 ? (
           <div
-            className="h-[640px] w-full overflow-y-auto grid grid-cols-3 gap-1 max-sm:grid-cols-3 max-sm:h-[700px]"
+            className="h-[calc(100vh-18vh)] w-full overflow-y-auto grid grid-cols-3 gap-1 max-sm:grid-cols-3 max-sm:h-[calc(100vh-20vh)]"
             id="childDiv"
           >
             {/* Fixed height and vertical scroll */}

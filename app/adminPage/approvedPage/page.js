@@ -1,19 +1,18 @@
 'use client';
-import { apiLink, handleAdminData } from '@/API/API CALLS';
+import { apiLink, approvedData } from '@/API/API CALLS';
 import U_Button from '@/Components/Button';
 import Sppiner from '@/Components/Spiner';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
 
-export default function Page() {
+export default function ApprovalPage() {
 
   const [email, setEmail] = useState();
   const [approval, setApproval] = useState(false);
   const [header, setHeader] = useState('');
   const [reject, setReject] = useState(false);
   const [adminData, setAdminData] = useState([]);
-  const [reloadApproveData, setReloadApproveData] = useState(false);
 
   useEffect(() =>{
   getUserData();
@@ -21,7 +20,7 @@ export default function Page() {
 
   async function getUserData() {
    try{
-      const aData = await handleAdminData();
+      const aData = await approvedData();
       if(aData)
       {
         setAdminData(aData.message.attentionAccount);
@@ -43,7 +42,6 @@ throw new Error("Failed to get the data " + err.message);
     setApproval(false);
     setEmail('');
     setReject(false);
-    setReloadApproveData((prev) => !prev);
   }
   return (
     <div className="bg-white w-full h-full">
@@ -59,15 +57,16 @@ throw new Error("Failed to get the data " + err.message);
           )}
           <table className="border-8 border-collapse border-green-500 w-full h-1/5">
             <caption className="caption-top">
-              <h1 className="font-bold mb-8"> User waiting for Approval</h1>
+              <h1 className="font-bold mb-8">Approved accounts</h1>
             </caption>
             <tr className="border-2">
               <th className="border-2 border-green-300">Profile Picture</th>
-
               <th className="border-2 border-green-300">First Name</th>
               <th className="border-2 border-green-300">Last Name</th>
               <th className="border-2 border-green-300">Email</th>
               <th className="border-2 border-green-300">Action</th>
+              <th className="border-2 border-green-300">Active</th>
+
             </tr>
 
             {adminData.map((items) => (
@@ -91,25 +90,20 @@ throw new Error("Failed to get the data " + err.message);
                   {!approval && (
                     <div className="flex gap-5 justify-center">
                       <U_Button
-                        b_name={'Approve'}
+                        b_name={'Block'}
                         b_function={(e) => {
                           handleApproval(items.email);
-                          setHeader('Approve Account?');
+                          setHeader('Block Account?');
                           setReject(false);
-                        }}
-                      />
-                      <U_Button
-                        b_name={'Reject'}
-                        red={true}
-                        b_function={(e) => {
-                          handleApproval(items.email);
-                          setHeader('Reject Account?');
-                          setReject(true);
                         }}
                       />
                     </div>
                   )}
                 </td>
+                <td className="border-2 border-green-100 flex h-full items-center justify-center">
+ <div className={`${items.isUserActive ? 'bg-green-500' : 'bg-red-500'} rounded-full p-2 w-2 h-2 border-2 border-slate-900`}></div>
+                    </td>
+
               </tr>
             ))}
           </table>
@@ -190,7 +184,7 @@ function ApprovalBox({ CancleBox, email, header, reject }) {
   return (
     <>
       <div
-        className={`absolute flex justify-center items-center ml-96 h-2/5 p-10 w-2/5 ${
+        className={`absolute flex flex-col justify-center h-2/5 w-4/5 ${
           modelOpen ? 'scale-100' : 'scale-0'
         } transition duration-500 ease-in-out`}
       >

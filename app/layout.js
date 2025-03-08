@@ -9,12 +9,13 @@ import { GetLogedUserData, handleAdminData } from '@/API/API CALLS';
 import Sppiner from '@/Components/Spiner';
 import ChangePassword from './components/changePassword';
 import DeActiveUser from './components/deActiveUser';
-import Page from './adminPage/page';
 import ChangeProfilePicture from './components/profilePicture';
+
 import SideBarHandler from './components/sidebarHandler';
+import AdminNav from './adminPage/adminNavigation';
 
 export default function RootLayout({ children }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [signUp, setSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -23,8 +24,6 @@ export default function RootLayout({ children }) {
   const [changeProfilePic, setChangeProfilePic] = useState(false);
   const [changePasswordPopUp, setChnagePasswordPopUp] = useState(false);
   const [deActivateuser, setDeActivateUser] = useState(false);
-  const [adminData, setAdminData] = useState([]);
-  const [reloadApproveData, setReloadApproveData] = useState(false);
   const [UserDetail, setUserDetails] = useState({
     firstName: '',
     lastName: '',
@@ -41,10 +40,6 @@ export default function RootLayout({ children }) {
         if (isAuthenticated) {
           const data = await GetLogedUserData();
           setUserDetails(data.message.getUser);
-          if ((isAdmin && !reloadApproveData) || reloadApproveData) {
-            const aData = await handleAdminData();
-            setAdminData(aData.message.attentionAccount);
-          }
           setLoading(false);
         }
       } catch (err) {
@@ -53,7 +48,7 @@ export default function RootLayout({ children }) {
       }
     }
     getUserdata();
-  }, [isAdmin, isAuthenticated, reloadApproveData]);
+  }, [isAdmin, isAuthenticated]);
 
   return (
     <html lang="en">
@@ -80,14 +75,7 @@ export default function RootLayout({ children }) {
             <div className="rounded-[10px] bg-green-50 flex justify-center">
               {!loading ? (
                 <main className="w-full h-full bg-gradient-to-t from-amber-100 via-amber-50 to-amber-100">
-                  {!isAdmin ? (
-                    children
-                  ) : (
-                    <Page
-                      adminData={adminData}
-                      setReloadApproveData={setReloadApproveData}
-                    />
-                  )}
+                    {children}
                 </main>
               ) : (
                 <div>
@@ -178,6 +166,9 @@ function SideBar({ isAdmin, sideBarOpen, setSideBar }) {
     >
       <strong>
         {!isAdmin && sideBarOpen && <Navigation setSideBar={setSideBar} />}
+        {isAdmin && sideBarOpen && <AdminNav setSideBar={setSideBar} />}
+
+                
       </strong>
     </aside>
   );

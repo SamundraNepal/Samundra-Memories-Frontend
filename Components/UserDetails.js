@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import Sppiner from './Spiner';
+import { CiUser } from "react-icons/ci";
 
 export default function UserDetails({
   UserDetail,
@@ -53,7 +53,7 @@ export default function UserDetails({
       {!loading ? (
         <div className={`relative z-50`}>
           <div className="flex gap-1 justify-center items-center">
-            <button onClick={openUserSettings}>
+           {imageLink ? <button onClick={openUserSettings}>
               <Image
                 className="rounded-full object-contain border-2 border-amber-900"
                 src={newImageLink} // Replace backslashes with forward slashes
@@ -61,7 +61,7 @@ export default function UserDetails({
                 height={50}
                 alt="user image"
               />
-            </button>
+            </button> : <CiUser />          }
 
             <h3>{firstName}</h3>
           </div>

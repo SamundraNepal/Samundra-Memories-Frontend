@@ -61,6 +61,12 @@ export default function UploadFiles({
     if (uploadFiles.length < 1) {
       return console.log('this is empty');
     }
+
+   if(uploadFiles.length > 50){
+      setMessage("Cannot upload files more than 50");
+      console.log(message);
+      return console.log('Cannot upload files more than 50');
+    }
     const formData = new FormData();
 
     for (let index = 0; index < uploadFiles.length; index++) {
@@ -72,13 +78,14 @@ export default function UploadFiles({
     }
 
     const xhr = new XMLHttpRequest();
-    xhr.timeout = 1000 * 60 * 600; //60 minute initial timeout timer.
 
     if (Type === 'Photos') {
       xhr.open('POST', `${apiLink}/images/upload`, true);
     } else if (Type === 'Videos') {
       xhr.open('POST', `${apiLink}/videos/upload`, true);
     }
+
+    xhr.timeout = 1000 * 60 * 600; //60 minute initial timeout timer.
 
     // Add the authorization token to the request headers
     const token = sessionStorage.getItem('cookies'); // Replace with the actual token
@@ -95,11 +102,9 @@ export default function UploadFiles({
 
     xhr.onload = function () {
       if (xhr.status === 200) {
-        console.log('Files uploaded successfully');
         setProgressTrue(false);
         ClosePopUp();
       } else {
-        console.error('Upload failed');
         setProgressTrue(false);
         console.error(xhr.responseText); // Log the error response
       }
@@ -139,17 +144,22 @@ export default function UploadFiles({
           <div className="flex flex-col gap-5 justify-center items-center">
             <U_input
               Type="file"
-              accept={Type === 'Photos' ? '.jpg, .jpeg, .png' : 'video/*'}
+              accept={Type === 'Photos' ? '.jpg, .jpeg, .png, .heic, .HEIC, image/heic' : 'video/*'}
               OnChange={(e) => setUploadFiles(e.target.files)}
             />
-            {uploadFiles.length > 0 && (
+            {uploadFiles.length > 0 &&  (
               <U_Button b_name={'Upload'} b_function={UploadImagesandVideos} />
             )}{' '}
             <U_Button b_name={'Cancel'} b_function={ClosePopUp} />
+
             <span className="font-bold text-red-600 uppercase">{message}</span>
           </div>
         ) : (
-          ''
+          <div className='text-center flex flex-col justify-center items-center'>
+          <span className="font-bold text-red-600 uppercase">{message}</span>
+{uploadFiles.length > 50 &&        <U_Button b_name={'Cancel'} b_function={ClosePopUp} />
+}
+            </div>
         )}
 
         <UploadFilesNotifications progress={progress} />

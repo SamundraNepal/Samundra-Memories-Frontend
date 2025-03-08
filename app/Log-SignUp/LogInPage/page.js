@@ -81,8 +81,8 @@ export default function Page({ setSignUp, setIsAuthenticated, setIsAdmin }) {
         <div className="flex flex-col justify-center items-center h-full w-full bg-gradient-to-t from-amber-100 via-green-50 to-amber-100 ">
           <title>Memories/LogIn</title>
           {!forgotPassword ? (
-            <div className="bg-amber-500 h-3/5 w-2/5 rounded-[10px] flex justify-start  text-slate-50 bg-opacity-50 max-sm:w-11/12 h-5/5">
-              <div className="text-center p-6 w-full">
+            <div className="bg-amber-500 h-4/5 w-2/5 rounded-[10px] flex justify-start  text-slate-50 bg-opacity-50 max-sm:w-11/12 h-5/5">
+              <div className="text-center p-6 w-full flex flex-col gap-20">
                 <h1 className=" text-2xl font-bold">
                   <strong>LOG IN </strong>
                 </h1>
@@ -136,13 +136,13 @@ export default function Page({ setSignUp, setIsAuthenticated, setIsAdmin }) {
                   <label
                     className={`${
                       result
-                        ? 'text-whute-600 text-xl uppercase'
+                        ? 'text-whute-600 text-xl uppercase w-full'
                         : 'text-red-600 uppercase'
                     }`}
                   >
                     {message}
                   </label>
-                  <div className="flex gap-4">
+                  <div className="flex gap-8">
                     <U_Button b_name="Log In" />
 
                     <U_Button b_name="Sign Up" b_function={signUp} />

@@ -157,7 +157,7 @@ export default function Page() {
                     className="h-[650px] w-full overflow-y-auto grid grid-cols-6 gap-2 p-2 max-sm:grid-cols-2 max-sm:h-[700px]"
                   >
                     {/* Combine video and image files */}
-                    {totalFiles.map((item, index) => (
+                    {totalFiles.slice(0,15).map((item, index) => (
                       <div key={index}>
                         <TrashFilesVideo
                           index={index}

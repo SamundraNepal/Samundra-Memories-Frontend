@@ -9,6 +9,9 @@ export default function UploadFilesNotifications({ progress }) {
           >
             {progress.toFixed(0)}%
           </div>
+          <div className=" absolute flex flex-col justify-content text-center w-full ">
+          <p className="text-white animate-pulse text-xl font-bold">{progress > 90 && 'Optimizing files'}</p>
+          </div>
         </div>
       )}
     </>

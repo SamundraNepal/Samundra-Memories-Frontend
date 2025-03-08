@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Tick from './tick';
 import { useEffect, useRef, useState } from 'react';
 import { base64Char } from '@/API/API CALLS';
+import ImageComponent from './reuseFiles/reuseImage';
 
 export default function ViewImage({
   index,
@@ -9,13 +10,24 @@ export default function ViewImage({
   indexOne,
   viewImage,
   handleSelectedFiles,
-  scrollPosition,
+  scrollPosition
 }) {
   const [isTick, setIsTicked] = useState(false);
   const [removeDuplicate, setIsDuplicate] = useState(false);
   const [showImage, setShowImage] = useState(false);
   const imageDiv = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
+  const[base64 , setIsBase64] = useState('');
+
+
+  useEffect(() =>{
+    if(isVisible)
+    {
+      Base64Converter();
+    }
+  },[isVisible])
+
+   // States to track the recycled image slots
 
   useEffect(() => {
     setShowImage(true);
@@ -30,20 +42,49 @@ export default function ViewImage({
     }
   }, [isTick]);
 
+
+  async function Base64Converter () {
+    const token = sessionStorage.getItem('cookies');
+    try {
+      const response = await fetch(`http://202.62.144.165:53284/v2/memories/whiteList/getImageBase64Code`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body:JSON.stringify({imageurl:items.imageURL}),
+      });
+  
+      if (!response.ok) {
+        return;
+
+      }
+      const data = await response.json();
+      setIsBase64(data.message);
+      
+    } catch (err) {
+  console.log('Error loading base64 code ');
+    }
+  };
+  
+
   //this is to optimize the images for example if they are not in view dont show them
   //this saves performance and images loades faster
   useEffect(() => {
+    
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setIsVisible(true);
+
+            setIsVisible(true);
+
           observer.unobserve(entry.target);
           //elemet is visisble so stop tracking it
-        } else {
+       } else {
           setIsVisible(false);
         }
       },
-      { threshold: 0.2 }
+      { threshold: 0.25}
       // this is what % of the images should be visible before it stop tracking
     );
 
@@ -57,6 +98,9 @@ export default function ViewImage({
     };
   }, [scrollPosition]);
 
+
+
+
   return (
     <div
       key={index}
@@ -69,29 +113,28 @@ export default function ViewImage({
         <div
           ref={imageDiv}
           key={index}
-          onClick={(e) => viewImage(items, indexOne, index)}
+          onClick={(e) => viewImage(items, indexOne, index , base64)}
         >
           {isVisible ? (
-            <Image
-              id="imageCheck"
-              src={items?.imageURL}
-              alt={items.imageName}
-              placeholder="blur"
-              blurDataURL={
-                items.imageBase64 === null ? base64Char : items.imageBase64
-              }
-              width={400}
-              height={400}
-              quality={10}
-              className={`border-4 hover:border-green-500  cursor-pointer transition-all duration-300 ${
-                isTick ? 'p-2' : 'p-0'
-              }`}
-            />
+
+            <ImageComponent  
+            src={items?.imageURL}
+            alt={'useer image'}
+            width={400}
+            height={400}
+            className={`border-4 hover:border-green-500  cursor-pointer transition-all duration-300 ${
+              isTick ? 'p-2' : 'p-0'
+            }`}
+            blurDataURL={ base64 === "" ? base64Char : base64}
+            placeholder={base64 != "" ? "blur" : "empty"}
+           />
+                   
           ) : (
             <div
-              className="border-2 bg-slate-300"
+              className="border-2 bg-slate-200"
               style={{ width: '100px', height: '400px' }}
-            ></div>
+            >
+            </div>
           )}
         </div>
       }

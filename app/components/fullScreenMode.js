@@ -266,13 +266,7 @@ export default function FullScreen({
 
             {!imageDetails.viodeoName && imageDetails?.imageURL && (
               <Image
-                src={imageDetails?.imageURL}
-                placeholder={'blur'}
-                blurDataURL={
-                  imageDetails?.imageBase64 === null
-                    ? base64Char
-                    : imageDetails?.imageBase64
-                }
+                src={imageDetails?.imageURL}               
                 alt={'Image'}
                 fill
                 className={`object-contain transition-opacity duration-500 ${

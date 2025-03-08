@@ -38,28 +38,18 @@ export default function TrashFilesVideo({
         }
       >
         {/* Conditionally render video or image */}
-        {item.videoURL ? (
-          <video preload="auto">
-            {/* Add controls for the video */}
-            <source src={item.videoURL} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-        ) : (
+     
           <Image
-            src={item?.imageURL}
+            src={item?.imageURL || item?.thumbnailsURL}
             alt={item.imageName || 'Image'}
-            placeholder="blur"
-            blurDataURL={
-              item?.imageBase64 === null ? base64Char : item?.imageBase64
-            }
-            width={200}
-            height={200}
+            width={400}
+            height={400}
             quality={20}
             className={`object-cover h-[300px] w-[300px] transition-all duration-300 ${
               isTick ? 'p-2' : 'p-0'
             }`}
           />
-        )}
+        
       </div>
     </div>
   );

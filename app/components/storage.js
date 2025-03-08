@@ -1,5 +1,8 @@
 import {
+  getAlbumImages,
+  getAlbumVideos,
   GetLogedUserData,
+  getStorageSize,
   loadImages,
   loadTrashImages,
   loadTrashVideos,
@@ -14,17 +17,11 @@ export const TotalSize = () => {
   useEffect(() => {
     async function getAllFileSizes() {
       try {
-        const imageSize = await loadImages();
-        const videoSizes = await loadVideos();
-        const trashImages = await loadTrashImages();
-        const trashVideos = await loadTrashVideos();
 
+        const size = await getStorageSize();
         const totalSizes = (
-          (videoSizes.message?.totalSize || 0) +
-          (imageSize.message?.totalSize || 0) +
-          (trashImages.message?.totalSize || 0) +
-          (trashVideos.message?.totalSize || 0)
-        ).toFixed(2);
+          (size.message?.totalSize || 0) +
+          (size.message?.totalSizeVideo || 0)).toFixed(2);
 
         // Convert to GB if larger than 100MB
         if (totalSizes > 100) {

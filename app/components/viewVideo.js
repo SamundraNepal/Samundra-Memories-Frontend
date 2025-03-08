@@ -1,6 +1,8 @@
 import Sppiner from '@/Components/Spiner';
 import Tick from './tick';
 import { useEffect, useRef, useState } from 'react';
+import VideoCompopnenet from './reuseFiles/reuseVideo';
+import { base64Char } from '@/API/API CALLS';
 
 export default function ViewVideo({
   index,
@@ -14,9 +16,16 @@ export default function ViewVideo({
   const [removeDuplicate, setIsDuplicate] = useState(false);
   const [showImage, setShowImage] = useState(false);
   const videoDiv = useRef(null);
-  const videoTag = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
+  const[base64 , setIsBase64] = useState('');
 
+
+
+  useEffect(()=>{
+    Base64Converter();
+  },[])
+
+  // Handles the selection logic and removing duplicates
   useEffect(() => {
     setShowImage(true);
 
@@ -31,30 +40,21 @@ export default function ViewVideo({
     }
   }, [isTick]);
 
-  //this is to optimize the images for example if they are not in view dont show them
-  //this saves performance and images loades faster
+  // IntersectionObserver to track visibility of the video
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          //elemet is visisble so stop tracking it
           setIsVisible(true);
-          observer.unobserve(entry.target);
+          observer.unobserve(entry.target); // Stop observing once in view
         } else {
           setIsVisible(false);
-          // Pause video when it’s out of view to free resources
-          // Pause and unload the video to free resources
-          if (videoTag.current) {
-            videoTag.current.pause();
-            videoTag.current.load(); // Unload video buffer
-          }
         }
       },
-      { threshold: 0.2 }
-      // this is what % of the images should be visible before it stop tracking
+      { threshold: 0.25 }
     );
 
-    if (videoDiv) {
+    if (videoDiv.current) {
       observer.observe(videoDiv.current);
     }
 
@@ -64,47 +64,69 @@ export default function ViewVideo({
     };
   }, [scrollPosition]);
 
+
+  async function Base64Converter () {
+    const token = sessionStorage.getItem('cookies');
+    try {
+      const response = await fetch(`http://202.62.144.165:53284/v2/memories/whiteList/getImageBase64Code`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body:JSON.stringify({imageurl:items.thumbnailsURL}),
+      });
+  
+      if (!response.ok) {
+        return;
+
+      }
+      const data = await response.json();
+      setIsBase64(data.message);
+      
+    } catch (err) {
+  console.log('Error loading base64 code ');
+    }
+  };
+  
+
+
+
+
+  // Conditionally render the video based on visibility and loading state
   return (
+    <>
+    
     <div
       key={index}
-      className={`relative ${
-        showImage ? 'scale-100' : 'scale-0'
-      } transition-all duration-300`}
+      className={`relative ${showImage ? 'scale-100' : 'scale-0'} transition-all duration-300`}
     >
       <div className="absolute z-10">
         <Tick setIsTicked={setIsTicked} />
       </div>
       {/* Position the Tick on top */}
       <div
-        className={`bg-slate-300`}
         ref={videoDiv}
         onClick={(e) => viewImage(items, indexOne, index)}
       >
         {isVisible ? (
-          <div>
-            <video
-              ref={videoTag}
-              className={`border-4 cursor-pointer transition-all duration-300 ${
-                isTick ? 'p-2' : 'p-0'
-              } hover:border-green-300`} // Using a more descriptive state name
-              preload="auto"
-              height={400}
-              width={400}
-            >
-              <source
-                src={items?.videoURL}
-                type="video/mp4"
-                alt={items?.videoName}
-              />
-            </video>
-          </div>
-        ) : (
-          <div
-            className="border-2 bg-slate-300"
-            style={{ width: '100px', height: '400px' }}
-          ></div>
+   <VideoCompopnenet  
+    src={items?.thumbnailsURL}
+    alt={'user video'}
+   width={400}
+   height={400}
+   className={`border-4 hover:border-green-500  cursor-pointer transition-all duration-300 ${
+    isTick ? 'p-2' : 'p-0'
+   }`}
+   blurDataURL={ base64 === "" ? base64Char : base64}
+   placeholder={base64 != "" ? "blur" : "empty"}
+  />        ) : (
+          <div className="border-2 bg-slate-50 h-[300px]"></div>
         )}
       </div>
     </div>
+
+    </>
+
   );
 }

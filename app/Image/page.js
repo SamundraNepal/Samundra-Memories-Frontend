@@ -6,6 +6,7 @@ import {
   base64Char,
   getAlbumImages,
   GetLogedUserData,
+  getSearchFiles,
   loadImages,
 } from '@/API/API CALLS';
 import { CiCircleChevLeft } from 'react-icons/ci';
@@ -26,6 +27,7 @@ import AddPhotosToAlbumBox from '../components/addPhotosToAlbum';
 import RemovePhotosFromAlbumBox from '../components/removePhotosFromAlbum';
 import InfoPanel from '../components/infoPanel';
 import SelectedFiles from '../components/selectedFiles';
+import SearchBar from '@/Components/SearchBar';
 
 // Dynamically import the VideoMapLocation component without SSR
 const MapLocation = dynamic(() => import('../components/Maps'), {
@@ -42,15 +44,15 @@ export default function Page() {
   const [uploadBox, setUploadBox] = useState(false);
   const [filesData, setFilesdata] = useState([]);
   const [viewImageFullScreen, setViewImageFullScreen] = useState({});
-
+  const[base64Code,setIsBase64Code] = useState("");
   //for getting image current pos
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentIndexOne, setCurrentIndexOne] = useState(0);
 
   //Optimize data
-  const [page, setPage] = useState(1);
-  const [subPage, setSubPage] = useState(20);
+  const [page, setPage] = useState(15);
+  const [subPage, setSubPage] = useState(10);
 
   //for scroll
   const [scrollDiv, setScrollDiv] = useState();
@@ -80,10 +82,11 @@ export default function Page() {
   const [removePhotosFromAlbum, setRemovePhotosFromAlbum] = useState(false);
   const [datas, setData] = useState([]);
 
+  const[searchDate , setSearchDate ] = useState('');
+
   useEffect(() => {
-    setSubPage(20);
-    setPage(1);
-    setAlbumName('');
+    setSubPage(10);
+    setPage(5);
     GetloadVideos();
   }, []);
 
@@ -221,7 +224,8 @@ export default function Page() {
     setIsSelected([]);
   }
 
-  function viewImage(items, indexOne, index) {
+  function viewImage(items, indexOne, index ,base64) {
+    setIsBase64Code(base64);
     setCurrentIndexOne(indexOne);
     setCurrentIndex(index);
     setViewImageFullScreen(items);
@@ -280,10 +284,29 @@ export default function Page() {
     setIsFullScreen(false);
   }
 
+ async function handleSearchData()
+  {
+    try{
+     const data = await getSearchFiles(searchDate);
+     if (data.message.result.length > 0) {
+      setFilesdata(data.message.result);
+     }
+    }catch(err)
+    {
+
+console.log(err.message)
+
+    }
+  }
+
+
   return (
     <>
       {!loading ? (
-        <div className="h-full w-full">
+        <div className="h-full w-full ">
+           
+
+
           {isDeleteAll && (
             <div className="absolute w-11/12 h-4/5 z-40 flex justify-center items-center">
               <div className="flex justify-center items-center w-3/5 h-4/5 ml-40 mt-10 max-sm:h-2/5 max-sm:w-full max-sm:ml-4">
@@ -332,8 +355,11 @@ export default function Page() {
           )}
           {!isFullScreen ? (
             <div>
+
               {/* Header with gradient background */}
-              <div className="p-4 border-b-2 border-amber-800 bg-gradient-to-r from-amber-50 via-amber-500 to-amber-50">
+              <div className="p-4 border-b-2  border-amber-800 bg-gradient-to-r from-amber-50 via-amber-500 to-amber-50">
+               
+
                 <div className="flex justify-between items-center">
                   <SelectedFiles
                     isSelected={isSelected}
@@ -357,12 +383,16 @@ export default function Page() {
                       </div>
                     )}
                   </div>
+                  <SearchBar placeholder={'Search by Year (eg 2022)'} searchDate ={searchDate} setSearchDate ={setSearchDate} handleFunction={handleSearchData}/>
+
                   {/* Button */}
                   <div className="ml-4 text-3xl">
                     <div className="cursor-pointer border-4 border-amber-500 rounded-full p-1 text-black">
                       <GoUpload onClick={UploadImageBox} />
                     </div>
                   </div>
+
+
 
                   {!viewAlbums && (
                     <div className="ml-4 text-3xl">
@@ -372,6 +402,7 @@ export default function Page() {
                     </div>
                   )}
                 </div>
+
               </div>
 
               <div className="relative flex justify-center">
@@ -418,6 +449,10 @@ export default function Page() {
                   </>
                 )}
               </div>
+
+
+
+
               {!viewAlbums && (
                 <ViewLoadImages
                   photoAlbums={photoAlbums}
@@ -445,6 +480,7 @@ export default function Page() {
                   scrollPosition={scrollPosition}
                   setPage={setPage}
                   setSubPage={setSubPage}
+
                 />
               )}
             </div>
@@ -463,6 +499,7 @@ export default function Page() {
               resizeFilesAlbumFiles={resizeFilesAlbumFiles}
               setIsSelected={setIsSelected}
               resizeAlbumFiles={resizeAlbumFiles}
+              base64Code = {base64Code}
             />
           )}
         </div>
@@ -480,8 +517,7 @@ function ViewLoadImages({
   subPage,
   photoAlbums,
   HandleViewAlbums,
-  scrollPosition,
-}) {
+  scrollPosition}) {
   function formatedate(dateString) {
     const date = new Date(dateString);
     const convertToString = String(date).slice(0, 15);
@@ -492,7 +528,7 @@ function ViewLoadImages({
     <div className="h-5/5 w-5/5 transition-all duration-300">
       {data?.length > 0 || photoAlbums.length > 0 ? (
         <div
-          className="h-[640px] w-full overflow-y-auto grid grid-cols-3 gap-1 max-sm:grid-cols-3 max-sm:h-[700px]"
+          className="h-[calc(100vh-18vh)] w-full overflow-y-auto grid grid-cols-3 gap-1 max-sm:grid-cols-3 max-sm:h-[calc(100vh-20vh)]"
           id="childDiv"
         >
           <ViewAlbums
@@ -507,14 +543,14 @@ function ViewLoadImages({
               className={`${
                 !group._id ? 'scale-0' : 'scale-100'
               } transition-transform duration-300 flex flex-col p-2 ${
-                group.fileDatas.length > 5 ? 'col-span-3' : 'max-sm:col-span-3'
+                group?.fileDatas?.length > 5 ? 'col-span-3' : 'max-sm:col-span-3'
               }`}
             >
               {/* Display group ID */}
 
               <div className="flex justify-start font-bold text-slate-500">
                 <span>
-                  {group.fileDatas.length > 0 && formatedate(group._id)}
+                  {group?.fileDatas?.length > 0 && formatedate(group._id)}
                 </span>
               </div>
 
@@ -522,18 +558,18 @@ function ViewLoadImages({
               <div
                 key={indexOne}
                 className={`grid w-full ${
-                  group.fileDatas.length >= 5
+                  group?.fileDatas?.length >= 5
                     ? 'grid-cols-6 max-sm:grid-cols-3'
-                    : group.fileDatas.length === 4
+                    : group.fileDatas?.length === 4
                     ? 'grid-cols-4'
-                    : group.fileDatas.length === 3
+                    : group.fileDatas?.length === 3
                     ? 'grid-cols-3'
-                    : group.fileDatas.length === 2
+                    : group.fileDatas?.length === 2
                     ? 'grid-cols-2'
                     : 'grid-cols-1'
                 }`}
               >
-                {group.fileDatas.slice(0, subPage).map((items, index) => (
+                {group.fileDatas?.slice(0, subPage).map((items, index) => (
                   <div key={index} className="bg-slate-300">
                     <ViewImage
                       index={index}
@@ -542,6 +578,7 @@ function ViewLoadImages({
                       viewImage={viewImage}
                       handleSelectedFiles={handleSelectedFiles}
                       scrollPosition={scrollPosition}
+
                     />
                   </div>
                 ))}
@@ -557,6 +594,7 @@ function ViewLoadImages({
     </div>
   );
 }
+
 
 function ViewAlbumImages({
   viewImage,
@@ -578,6 +616,8 @@ function ViewAlbumImages({
   }
 
   useEffect(() => {
+    setPage(5);
+    setSubPage(15);
     async function loadApiData() {
       try {
         const albumData = await getAlbumImages({ albumName });
@@ -585,7 +625,8 @@ function ViewAlbumImages({
           setData(albumData.message.result);
           setAlbumImages(albumData.message.result); // this goes to the fullscreen images
         } else {
-          console.log('Semething is wrong with the fetch');
+          
+          console.log('Semething is wrong with the fetch ' + albumData.message);
         }
       } catch (err) {
         console.log('Error fetching the data' + err.message);
@@ -602,7 +643,7 @@ function ViewAlbumImages({
     <div className="h-full w-full transition-all duration-300">
       {data?.length > 0 ? (
         <div
-          className="h-[640px] w-full overflow-y-auto grid grid-cols-3 gap-1 max-sm:grid-cols-3 max-sm:h-[700px]"
+          className="h-[calc(100vh-18vh)] w-full overflow-y-auto grid grid-cols-3 gap-1 max-sm:grid-cols-3 max-sm:h-[calc(100vh-20vh)]"
           id="childDiv"
         >
           {/* Fixed height and vertical scroll */}
@@ -677,6 +718,7 @@ function ImageFullScreen({
   albumImages,
   setIsSelected,
   resizeAlbumFiles,
+  base64Code
 }) {
   const [loading, setLoading] = useState(true);
   const [imageDetails, setImageDetails] = useState({});
@@ -826,6 +868,8 @@ function ImageFullScreen({
         >
           {!loading ? (
             <div className="w-full h-full bg-black flex">
+
+
               {details ? (
                 <div className="flex items-start max-sm:z-50 relative">
                   <div
@@ -833,6 +877,8 @@ function ImageFullScreen({
                       barAnimation ? 'scale-100' : 'scale-0'
                     } max-sm:w-[410px] bg-opacity-90 z-20`}
                   >
+
+
                     <div className="flex flex-col gap-5">
                       <div>
                         <button
@@ -942,15 +988,12 @@ function ImageFullScreen({
 
                   <div className="h-full">
                     <Image
+                    priority
                       src={imageDetails?.imageURL}
                       alt={'Image'}
                       fill
                       placeholder="blur"
-                      blurDataURL={
-                        imageDetails?.imageBase64 === null
-                          ? base64Char
-                          : imageDetails.imageBase64
-                      }
+                      blurDataURL={ base64Code != "" ? base64Code : base64Char}
                       className={`object-contain transition-opacity duration-500 ${
                         imageChanged ? 'opacity-0' : 'opacity-100'
                       }`}
